@@ -3,9 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Виджет карты 2GIS</title>
+    <title>Карта с медицинскими организациями</title>
+    <style>
+        #map {
+            height: 600px;
+            width: 800px;
+            float: right; /* Сдвиг на правую сторону */
+        }
+    </style>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40
+&lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map('map', {
+                center: [43.238293, 76.945465], // Координаты центра карты (например, центр города)
+                zoom: 11
+            });
+
+            // Получаем координаты города Алматы
+            ymaps.geocode('Алматы').then(function (res) {
+                var bounds = res.geoObjects.get(0).properties.get('boundedBy');
+
+                // Поиск медицинских организаций в городе Алматы по ключевому слову "поликлиника"
+                ymaps.search('поликлиника', {
+                    boundedBy: bounds,
+                    provider: 'yandex#search'
+                }).then(function (res) {
+                    // Отображение найденных организаций "поликлиника"
+                    res.geoObjects.each(function (geoObject) {
+                        var coords = geoObject.geometry.getCoordinates();
+                        var name = geoObject.properties.get('name');
+
+                        // Создаем метку с названием организации
+                        var placemark = new ymaps.Placemark(coords, {
+                            hintContent: name,
+                            balloonContent: name
+                        }, {
+                            preset: 'islands#redCircleIcon', // Красный круглый маркер
+                            iconLayout: 'default#image', // Используем макет метки по умолчанию
+                            iconImageSize: [30, 30], // Размеры изображения метки
+                            iconImageOffset: [-15, -15] // Смещение изображения метки
+                        });
+
+                        // Добавляем метку на карту
+                        map.geoObjects.add(placemark);
+
+                        // Добавляем обработчик клика на метку
+                        placemark.events.add('click', function () {
+                            // Открываем информационное окно организации
+                            geoObject.balloon.open();
+                        });
+                    });
+                });
+
+                                ymaps.search('больница', {
+                    boundedBy: bounds,
+                    provider: 'yandex#search'
+                }).then(function (res) {
+                    // Отображение найденных организаций "поликлиника"
+                    res.geoObjects.each(function (geoObject) {
+                        var coords = geoObject.geometry.getCoordinates();
+                        var name = geoObject.properties.get('name');
+
+                        // Создаем метку с названием организации
+                        var placemark = new ymaps.Placemark(coords, {
+                            hintContent: name,
+                            balloonContent: name
+                        }, {
+                            preset: 'islands#redCircleIcon', // Красный круглый маркер
+                            iconLayout: 'default#image', // Используем макет метки по умолчанию
+                            iconImageSize: [30, 30], // Размеры изображения метки
+                            iconImageOffset: [-15, -15] // Смещение изображения метки
+                        });
+
+                        // Добавляем метку на карту
+                        map.geoObjects.add(placemark);
+
+                        // Добавляем обработчик клика на метку
+                        placemark.events.add('click', function () {
+                            // Открываем информационное окно организации
+                            geoObject.balloon.open();
+                        });
+                    });
+                });
+                // Поиск медицинских организаций в городе Алматы по ключевому слову "больница"
+                ymaps.search('клиника', {
+                    boundedBy: bounds,
+                    provider: 'yandex#search'
+                }).then(function (res) {
+                    // Отображение найденных организаций "больница"
+                    res.geoObjects.each(function (geoObject) {
+                        var coords = geoObject.geometry.getCoordinates();
+                        var name = geoObject.properties.get('name');
+
+                        // Создаем метку с названием организации
+                        var placemark = new ymaps.Placemark(coords, {
+                            hintContent: name,
+                            balloonContent: name
+                        }, {
+                            preset: 'islands#blueCircleIcon', // Синий круглый маркер
+                            iconLayout: 'default#image', // Используем макет метки по умолчанию
+                            iconImageSize: [30, 30], // Размеры изображения метки
+                            iconImageOffset: [-15, -15] // Смещение изображения метки
+                        });
+
+                        // Добавляем метку на карту
+                        map.geoObjects.add(placemark);
+
+                        // Добавляем обработчик клика на метку
+                        placemark.events.add('click', function () {
+                            // Открываем информационное окно организации
+                            geoObject.balloon.open();
+                        });
+                    });
+                });
+            });
+        }
+    </script>
 </head>
 <body>
-<script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A7691e17685fae73365ddd6e64f2e8a445ff8165faf6132dc9ad2d764d9a37247&amp;width=785&amp;height=582&amp;lang=ru_RU&amp;scroll=true"></script>
+    <div id="map"></div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
