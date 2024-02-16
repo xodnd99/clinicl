@@ -1,11 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Виджет карты 2GIS</title>
+    <title>Клиники г.Алматы</title>
+    <style>
+        #map {
+            height: 600px;
+            width: 800px;
+            float: right; /* Сдвиг на правую сторону */
+        }
+    </style>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40&lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map('map', {
+                center: [43.238293, 76.945465], // Координаты центра карты (например, центр города)
+                zoom: 11
+            });
+
+            // Создаем коллекцию для хранения меток
+            var placemarks = new ymaps.GeoObjectCollection();
+
+            // Получаем координаты города Алматы
+            ymaps.geocode('Алматы').then(function (res) {
+                var bounds = res.geoObjects.get(0).properties.get('boundedBy');
+
+                // Фильтр по категориям медицинских организаций
+                var categories = ['поликлиника', 'больница', 'клиника'];
+
+                // Поиск медицинских организаций в городе Алматы по категориям
+                categories.forEach(function (category) {
+                    ymaps.search(category, {
+                        boundedBy: bounds,
+                        provider: 'yandex#search'
+                    }).then(function (res) {
+                        // Отображение найденных организаций
+                        res.geoObjects.each(function (geoObject) {
+                            var coords = geoObject.geometry.getCoordinates();
+                            var name = geoObject.properties.get('name'); // Получаем название организации
+                            var description = geoObject.properties.get('description'); // Получаем описание организации
+
+                            // Создаем метку
+                            var placemark = new ymaps.Placemark(coords, {}, {
+                                preset: 'islands#redDotIconWithCaption' // Красный круг с красным плюсиком и названием организации
+                            });
+
+                            // Добавляем метку на карту и в коллекцию
+                            map.geoObjects.add(placemark);
+                            placemarks.add(placemark);
+
+                            // Добавляем обработчик события click для метки
+                            placemark.events.add('click', function () {
+                                // Создаем информационное окно организации
+                                var balloonContent = '<div><strong>' + name + '</strong></div><div>' + description + '</div><div><button id="attachButton" style="background-color: #0078d4; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button></div>';
+                                map.balloon.open(coords, balloonContent);
+
+                                // Добавляем обработчик события click для кнопки "Прикрепиться"
+                                setTimeout(function() {
+                                    document.getElementById('attachButton').addEventListener('click', function () {
+                                        window.location.href = '/login/'; // Замените на URL вашей страницы входа
+                                    });
+                                }, 100); // Ждем немного, чтобы информационное окно успело открыться
+                            });
+
+                            // Добавляем обработчик события mouseenter для метки
+                            placemark.events.add('mouseenter', function () {
+                                // Показываем название организации при наведении на метку
+                                placemark.properties.set('iconCaption', name);
+                            });
+
+                            // Добавляем обработчик события mouseleave для метки
+                            placemark.events.add('mouseleave', function () {
+                                // Убираем название организации при уходе курсора с метки
+                                placemark.properties.set('iconCaption', '');
+                            });
+                        });
+                    });
+                });
+
+                // Добавляем коллекцию меток на карту
+                map.geoObjects.add(placemarks);
+            });
+        }
+
+    </script>
 </head>
 <body>
-<script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A7691e17685fae73365ddd6e64f2e8a445ff8165faf6132dc9ad2d764d9a37247&amp;width=785&amp;height=582&amp;lang=ru_RU&amp;scroll=true"></script>
+    <div id="map"></div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
