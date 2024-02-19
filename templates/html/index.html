@@ -5,13 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Клиники г.Алматы</title>
     <style>
+        /* Стили для рамки карты */
+                body {
+            background: url('../../media/Backgrounds-.jpg'); /* Путь к изображению */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        #map-container {
+            position: relative;
+            width: 750px; /* Ширина рамки */
+            height: 500px; /* Высота рамки */
+            margin: 8px auto; /* Отступы сверху и снизу для центрирования по вертикали */
+            border: 8px solid #ddd; /* Стиль и цвет рамки */
+            border-radius: 8px; /* Скругление углов рамки */
+            overflow: hidden; /* Скрытие контента, выходящего за рамку */
+            float: right; 
+            vertical-align: top; /* Выравнивание по правому краю */
+        }
+        
         #map {
-            height: 600px;
-            width: 800px;
-            float: right; /* Сдвиг на правую сторону */
+            width: 750px; /* Ширина карты */
+            height: 500px; /* Высота карты */
+            position: absolute; /* Абсолютное позиционирование */
+            top: 0; /* Размещение карты в верхнем краю рамки */
+            right: 0; /* Размещение карты в правом краю рамки */
         }
     </style>
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40
+&lang=ru_RU" type="text/javascript"></script>
     <script type="text/javascript">
         ymaps.ready(init);
 
@@ -42,6 +65,7 @@
                             var coords = geoObject.geometry.getCoordinates();
                             var name = geoObject.properties.get('name'); // Получаем название организации
                             var description = geoObject.properties.get('description'); // Получаем описание организации
+                            var url = geoObject.properties.get('url'); // Получаем ссылку на сайт организации
 
                             // Создаем метку
                             var placemark = new ymaps.Placemark(coords, {}, {
@@ -55,8 +79,16 @@
                             // Добавляем обработчик события click для метки
                             placemark.events.add('click', function () {
                                 // Создаем информационное окно организации
-                                var balloonContent = '<div><strong>' + name + '</strong></div><div>' + description + '</div><div><button id="attachButton" style="background-color: #0078d4; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button></div>';
-                                map.balloon.open(coords, balloonContent);
+                                var balloonContent = '<div>' + description + '</div>';
+                                if (url) {
+                                    balloonContent += '<div class="link-container"><span style="margin-right: 5px;">&#x1F310;</span><a href="' + url + '" target="_blank">' + url + '</a><br></div>'; // Добавляем отступы между кнопкой и ссылкой
+                                }
+                                balloonContent += '<div><button id="attachButton" style="background-color: #0078d4; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button><br></div>';
+
+                                map.balloon.open(coords, {
+                                    contentHeader: name,
+                                    contentBody: balloonContent
+                                });
 
                                 // Добавляем обработчик события click для кнопки "Прикрепиться"
                                 setTimeout(function() {
@@ -89,6 +121,9 @@
     </script>
 </head>
 <body>
-    <div id="map"></div>
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
 </body>
 </html>
+
