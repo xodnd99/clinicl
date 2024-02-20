@@ -17,3 +17,4 @@ class CustomLoginView(LoginView):
 class YourModelList(generics.ListCreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = YourModelSerializer
+
