@@ -6,11 +6,12 @@
     <title>Клиники г.Алматы</title>
     <style>
         /* Стили для рамки карты */
-                body {
+        body {
             background: url('media/Backgrounds-.jpg'); /* Путь к изображению */
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
+            height: 100vh;
         }
 
         #map-container {
@@ -32,9 +33,87 @@
             top: 0; /* Размещение карты в верхнем краю рамки */
             right: 0; /* Размещение карты в правом краю рамки */
         }
+
+        .top-panel {
+            background: rgba(19, 35, 47, 0.9);
+            padding: 10px;
+            max-width: 100%;
+            margin: 0 auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            display: flex;
+            justify-content: space-between; /* Разместить элементы по краям */
+            align-items: center; /* Выравнивание по вертикали по центру */
+        }
+
+        .search-container {
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .search-container input[type="text"] {
+            font-size: 15px;
+            padding: 4px 8px;
+            background: none;
+            border: 1.5px solid #a0b3b0;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            width: 600px; /* Измените эту ширину по желанию */
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: white;
+        }
+
+        /* Добавляем прямой слеш при фокусировке на поле ввода */
+        .search-container input[type="text"]:focus::before {
+            content: "/";
+            position: absolute;
+            left: 10px;
+            color: white;
+        }
+
+
+        .button-container {
+            display: flex; /* Размещаем кнопки в ряд */
+        }
+        
+                .button-container a{
+            position: relative; /* Относительное позиционирование для псевдоэлементов */
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 5px 15px;
+            margin-right: -10px; /* Убираем пробел между кнопками */
+            font-size: 15px;
+            background-color: #1ab188;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Добавляем цветовую анимацию */
+            white-space: nowrap;
+            border-radius: 0; /* Устанавливаем начальный радиус скругления 0 */
+        }
+                .button-container a:first-child {
+            border-top-left-radius: 8px; /* Устанавливаем скругление для левого верхнего угла */
+            border-bottom-left-radius: 8px; /* Устанавливаем скругление для левого нижнего угла */
+        }
+                
+                .button-container a:last-child {
+            border-top-right-radius: 8px; /* Устанавливаем скругление для правого верхнего угла */
+            border-bottom-right-radius: 8px; /* Устанавливаем скругление для правого нижнего угла */
+        }
+        .button-container a:hover {
+            background-color: #fff; /* Яркий белый цвет при наведении */
+            color: #1ab188; /* Зеленый цвет текста при наведении */
+        }
     </style>
 
-    
+
     <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40
 &lang=ru_RU" type="text/javascript"></script>
     <script type="text/javascript">
@@ -93,9 +172,9 @@
                                 });
 
                                 // Добавляем обработчик события click для кнопки "Прикрепиться"
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     document.getElementById('attachButton').addEventListener('click', function () {
-                                        window.location.href = '/login/'; // Замените на URL вашей страницы входа
+                                        window.location.href = 'login/?tab=login'; // Замените на URL вашей страницы входа
                                     });
                                 }, 100); // Ждем немного, чтобы информационное окно успело открыться
                             });
@@ -121,11 +200,57 @@
         }
 
     </script>
+
 </head>
 <body>
-    <div id="map-container">
-        <div id="map"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем ссылки на кнопки "Войти" и "Регистрация"
+        var loginLink = document.querySelector('a[href*="registration/login.html/?tab=login"]');
+        var registerLink = document.querySelector('a[href*="registration/login.html/?tab=signup"]');
+
+        // Добавляем обработчик события клика на ссылку "Войти"
+        if (loginLink) {
+            loginLink.addEventListener('click', function (event) {
+                // Предотвращаем стандартное действие ссылки
+                event.preventDefault();
+                // Перенаправляем пользователя на login.html с параметром tab=login
+                window.location.href = 'registration/login.html';
+            });
+        }
+
+        // Добавляем обработчик события клика на ссылку "Регистрация"
+        if (registerLink) {
+            registerLink.addEventListener('click', function (event) {
+                // Предотвращаем стандартное действие ссылки
+                event.preventDefault();
+                // Перенаправляем пользователя на login.html с параметром tab=signup
+                window.location.href = 'registration/login.html';
+            });
+        }
+    });
+</script>
+
+
+<div class="top-panel">
+    <div class="search-container">
+        <label>
+            <input type="text" placeholder="Поиск по сайту">
+        </label>
     </div>
+    <div class="button-container">
+        <a href="registration/login.html?tab=login">Войти</a>
+        <a href="registration/login.html?tab=signup">Регистрация</a>
+    </div>
+</div>
+
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+
 </body>
 </html>
 
