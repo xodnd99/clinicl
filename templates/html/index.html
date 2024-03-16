@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Клиники г.Алматы</title>
+    <style>
+        /* Стили для рамки карты */
+        body {
+            background: url('media/Backgrounds-.jpg'); /* Путь к изображению */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            max-width: 100%;
+            margin: 1px;
+        }
+
+        #map-container {
+            position: relative;
+            width: 750px; /* Ширина рамки */
+            height: 500px; /* Высота рамки */
+            margin: 8px auto; /* Отступы сверху и снизу для центрирования по вертикали */
+            border: 8px solid #ddd; /* Стиль и цвет рамки */
+            border-radius: 8px; /* Скругление углов рамки */
+            overflow: hidden; /* Скрытие контента, выходящего за рамку */
+            float: right;
+            vertical-align: top; /* Выравнивание по правому краю */
+        }
+
+        #map {
+            width: 750px; /* Ширина карты */
+            height: 500px; /* Высота карты */
+            position: absolute; /* Абсолютное позиционирование */
+            top: 0; /* Размещение карты в верхнем краю рамки */
+            right: 0; /* Размещение карты в правом краю рамки */
+        }
+
+        .top-panel {
+            background: rgba(19, 35, 47, 0.9);
+            padding: 8px;
+            max-width: 100%;
+            border-radius: 0px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            display: flex;
+            justify-content: space-between; /* Разместить элементы по краям */
+            align-items: center; /* Выравнивание по вертикали по центру */
+        }
+
+        .search-container {
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .search-container input[type="text"] {
+            font-size: 15px;
+            padding: 4px 8px;
+            background: none;
+            border: 1.5px solid #a0b3b0;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            width: 500px; /* Измените эту ширину по желанию */
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: white;
+        }
+
+        /* Добавляем прямой слеш при фокусировке на поле ввода */
+        .search-container input[type="text"]:focus::before {
+            content: "/";
+            position: absolute;
+            left: 10px;
+            color: white;
+        }
+
+
+        .button-container {
+            display: flex; /* Размещаем кнопки в ряд */
+        }
+
+                .button-container a{
+            position: relative; /* Относительное позиционирование для псевдоэлементов */
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-right: -4px; /* Убираем пробел между кнопками */
+            font-size: 15px;
+            background-color: rgba(19, 35, 47, 0.9);;
+            color: #fff;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Добавляем цветовую анимацию */
+            white-space: nowrap;
+            border-radius: 0; /* Устанавливаем начальный радиус скругления 0 */
+        }
+                
+        .button-container a:hover {
+            background-color: #13a178; /* Яркий белый цвет при наведении */
+            color: #fff; /* Зеленый цвет текста при наведении */
+        }
+        
+.user-menu {
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(19, 35, 47, 0.9);;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: #ffffff;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 15px;
+}
+
+.user-icon i {
+    font-size: 20px;
+}
+
+.dropdown-content a:hover {
+    background-color: #13a178;
+}
+
+    </style>
+
+    <script>
+        function toggleMenu() {
+    var dropdown = document.getElementById("dropdown");
+    var userName = document.querySelector(".user-name");
+
+    // Установка ширины dropdown равной ширине userName
+    dropdown.style.width = `${userName.offsetWidth}px`;
+
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+}
+    </script>
+<script>
+function toggleMenu() {
+    var dropdown = document.getElementById("dropdown");
+    var userName = document.querySelector(".user-name");
+
+    // Установка ширины dropdown равной ширине userName
+    dropdown.style.width = `${userName.offsetWidth}px`;
+
+    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+}
+
+
+function closeMenu() {
+    var dropdown = document.getElementById("dropdown");
+    dropdown.style.display = "none";
+}
+</script>
+
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40
+&lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map('map', {
+                center: [43.238293, 76.945465], // Координаты центра карты (например, центр города)
+                zoom: 11
+            });
+
+            // Создаем коллекцию для хранения меток
+            var placemarks = new ymaps.GeoObjectCollection();
+
+            // Получаем координаты города Алматы
+            ymaps.geocode('Алматы').then(function (res) {
+                var bounds = res.geoObjects.get(0).properties.get('boundedBy');
+
+                // Фильтр по категориям медицинских организаций
+                var categories = ['поликлиника', 'больница', 'клиника'];
+
+                // Поиск медицинских организаций в городе Алматы по категориям
+                categories.forEach(function (category) {
+                    ymaps.search(category, {
+                        boundedBy: bounds,
+                        provider: 'yandex#search'
+                    }).then(function (res) {
+                        // Отображение найденных организаций
+                        res.geoObjects.each(function (geoObject) {
+                            var coords = geoObject.geometry.getCoordinates();
+                            var name = geoObject.properties.get('name'); // Получаем название организации
+                            var description = geoObject.properties.get('description'); // Получаем описание организации
+                            var url = geoObject.properties.get('url'); // Получаем ссылку на сайт организации
+
+                            // Создаем метку
+                            var placemark = new ymaps.Placemark(coords, {}, {
+                                preset: 'islands#redDotIconWithCaption' // Красный круг с красным плюсиком и названием организации
+                            });
+
+                            // Добавляем метку на карту и в коллекцию
+                            map.geoObjects.add(placemark);
+                            placemarks.add(placemark);
+
+                            // Добавляем обработчик события click для метки
+                            placemark.events.add('click', function () {
+                                // Создаем информационное окно организации
+                                var balloonContent = '<div>' + description + '</div>';
+                                if (url) {
+                                    balloonContent += '<div class="link-container"><span style="margin-right: 5px;">&#x1F310;</span><a href="' + url + '" target="_blank">' + url + '</a><br></div>'; // Добавляем отступы между кнопкой и ссылкой
+                                }
+                                balloonContent += '<div><button id="attachButton" style="background-color: #0078d4; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button><br></div>';
+
+                                map.balloon.open(coords, {
+                                    contentHeader: name,
+                                    contentBody: balloonContent
+                                });
+
+                                // Добавляем обработчик события click для кнопки "Прикрепиться"
+                                setTimeout(function () {
+                                    document.getElementById('attachButton').addEventListener('click', function () {
+                                        window.location.href = 'registration/login.html?tab=login'; // Замените на URL вашей страницы входа
+                                    });
+                                }, 100); // Ждем немного, чтобы информационное окно успело открыться
+                            });
+
+                            // Добавляем обработчик события mouseenter для метки
+                            placemark.events.add('mouseenter', function () {
+                                // Показываем название организации при наведении на метку
+                                placemark.properties.set('iconCaption', name);
+                            });
+
+                            // Добавляем обработчик события mouseleave для метки
+                            placemark.events.add('mouseleave', function () {
+                                // Убираем название организации при уходе курсора с метки
+                                placemark.properties.set('iconCaption', '');
+                            });
+                        });
+                    });
+                });
+
+                // Добавляем коллекцию меток на карту
+                map.geoObjects.add(placemarks);
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем ссылки на кнопки "Войти" и "Регистрация"
+        var loginLink = document.querySelector('a[href*="registration/login.html/?tab=login"]');
+        var registerLink = document.querySelector('a[href*="registration/login.html/?tab=signup"]');
+
+        // Добавляем обработчик события клика на ссылку "Войти"
+        if (loginLink) {
+            loginLink.addEventListener('click', function (event) {
+                // Предотвращаем стандартное действие ссылки
+                event.preventDefault();
+                // Перенаправляем пользователя на login.html с параметром tab=login
+                window.location.href = 'registration/login.html?tab=login';
+            });
+        }
+
+        // Добавляем обработчик события клика на ссылку "Регистрация"
+        if (registerLink) {
+            registerLink.addEventListener('click', function (event) {
+                // Предотвращаем стандартное действие ссылки
+                event.preventDefault();
+                // Перенаправляем пользователя на login.html с параметром tab=signup
+                window.location.href = 'registration/login.html?tab=signup';
+            });
+        }
+    });
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<div class="top-panel">
+    <div id="hamburger">
+        <div></div>
+        <div></div>
+        <div></div>
+        <a>Menu</a>
+    </div>
+    <div class="search-container">
+        <label>
+            <input type="text" placeholder="Поиск по сайту">
+        </label>
+    </div>
+
+    <div class="button-container">
+        {% if user.is_authenticated %}
+            <div class="user-menu" onclick="toggleMenu()" onmouseleave="closeMenu()">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
+                <div id="dropdown" class="dropdown-content">
+                    <a href="#profile"><i class="fas fa-user-circle"></i> Личный кабинет</a>
+                    <a href="#notifications"><i class="fas fa-bell"></i> Уведомления </a>
+                    <form action="{% url 'logout' %}" method="post" id="logout-form" style="display:none;">
+                        {% csrf_token %}
+                        <input type="submit" value="Выйти" style="display:none;">
+                    </form>
+                    <a href="#" onclick="document.getElementById('logout-form').submit();"><i
+                            class="fas fa-sign-out-alt"></i> Выйти</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="{% url 'login-signup' %}?tab=login" class="tab login">Войти</a>
+            <a href="{% url 'login-signup' %}?tab=signup" class="tab signup">Регистрация</a>
+        {% endif %}
+    </div> 
+</div>
+
+
+
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+
+<div id="container">
+    <nav class="clear">
+        <link rel="stylesheet" type="text/css" media="all" href="/static/style.css"/>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Share</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </nav>
+    <div id="content">
+        <div class="jquery-script-ads">
+            <script type="text/javascript"><!--
+            google_ad_client = "ca-pub-2783044520727903";
+            /* jQuery_demo */
+            google_ad_slot = "2780937993";
+            google_ad_width = 728;
+            google_ad_height = 90;
+            //-->
+            </script>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="/static/jquery.hamburger.js"></script>
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+
+    function showUserMenu() {
+        document.getElementById("userMenu").classList.remove("hidden");
+    }
+
+    function hideUserMenu() {
+        document.getElementById("userMenu").classList.add("hidden");
+    }
+
+</script>
+</body>
+</html>
+
