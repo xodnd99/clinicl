@@ -10,7 +10,7 @@ class CustomPatientAdmin(UserAdmin):
     search_fields = ('iin', 'email', 'first_name', 'last_name')
 
     fieldsets = (
-        (None, {'fields': ('iin', 'email')}),
+        (None, {'fields': ('iin', 'email', 'photo')}),
         ('Change password', {'fields': ('change_password',)}),
         ('Important dates', {'fields': ('last_login',)}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),
@@ -24,7 +24,7 @@ class CustomPatientAdmin(UserAdmin):
         ),
     )
 
-    ordering = ('id',)
+    ordering = ('iin',)
     readonly_fields = ('last_login', 'change_password',)
 
     def change_password(self, obj):
@@ -78,4 +78,21 @@ class CustomPatientAdmin(UserAdmin):
 # Регистрируем модель и класс администратора
 admin.site.register(Patient, CustomPatientAdmin)
 
+from .models import PatientDetail, Organization, Doctor
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('ext_id', 'name', 'address', 'url', 'phone_numbers', 'hours_text')
+
+@admin.register(Doctor)
+class DoctorAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'position', 'email', 'phone_number', 'clinic')
+
+    @admin.register(PatientDetail)
+    class PatientDetailAdmin(admin.ModelAdmin):
+        list_display = ('get_full_name', 'phone_number', 'district', 'address', 'birth_date', 'profile_pic_tag')
+
+        def get_full_name(self, obj):
+            return f"{obj.patient.first_name} {obj.patient.last_name}"
+
+        get_full_name.short_description = 'Patient'

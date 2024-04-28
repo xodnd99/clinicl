@@ -1,41 +1,25 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Клиники г.Алматы</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Клиники г.Алматы{% endblock title %}</title>
     <style>
         /* Стили для рамки карты */
         body {
-            background: url('media/Backgrounds-.jpg'); /* Путь к изображению */
+            background: url('../../media/Bacground.jpg'); /* Путь к изображению */
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
-            height: 100vh;
-            max-width: 100%;
-            margin: 1px;
+            margin: 0; /* Убедитесь, что отступов нет, если они не нужны */
+            min-height: 100%; /* Минимальная высота равна высоте видимой части экрана */
+            min-width: 100%;
         }
 
-        #map-container {
-            position: relative;
-            width: 750px; /* Ширина рамки */
-            height: 500px; /* Высота рамки */
-            margin: 8px auto; /* Отступы сверху и снизу для центрирования по вертикали */
-            border: 8px solid #ddd; /* Стиль и цвет рамки */
-            border-radius: 8px; /* Скругление углов рамки */
-            overflow: hidden; /* Скрытие контента, выходящего за рамку */
-            float: right;
-            vertical-align: top; /* Выравнивание по правому краю */
+        .background-content {
+            min-height: 100%;
         }
-
-        #map {
-            width: 750px; /* Ширина карты */
-            height: 500px; /* Высота карты */
-            position: absolute; /* Абсолютное позиционирование */
-            top: 0; /* Размещение карты в верхнем краю рамки */
-            right: 0; /* Размещение карты в правом краю рамки */
-        }
-
         .top-panel {
             background: rgba(19, 35, 47, 0.9);
             padding: 8px;
@@ -45,6 +29,8 @@
             display: flex;
             justify-content: space-between; /* Разместить элементы по краям */
             align-items: center; /* Выравнивание по вертикали по центру */
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
 
         .search-container {
@@ -85,7 +71,7 @@
             display: flex; /* Размещаем кнопки в ряд */
         }
 
-                .button-container a{
+        .button-container a {
             position: relative; /* Относительное позиционирование для псевдоэлементов */
             border: none;
             outline: none;
@@ -99,57 +85,648 @@
             white-space: nowrap;
             border-radius: 0; /* Устанавливаем начальный радиус скругления 0 */
         }
-                
+
         .button-container a:hover {
             background-color: #13a178; /* Яркий белый цвет при наведении */
             color: #fff; /* Зеленый цвет текста при наведении */
         }
+
+        .user-menu {
+            color: white;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .user-menu:hover {
+            background: #1ab188;
+            color: #fff;
+            height: 23px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(19, 35, 47, 0.9);;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .dropdown-content a {
+            color: #ffffff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 17px;
+        }
+
+
+        .dropdown-content a:hover {
+            background-color: #13a178;
+        }
         
-.user-menu {
-    color: white;
+
+        {% block extra_styles %}
+            #map-container {
+                position: relative;
+                width: 48vw; /* Ширина рамки */
+                height: 75vh; /* Высота рамки */
+                margin: 8px auto; /* Отступы сверху и снизу для центрирования по вертикали */
+                border: 8px solid #06ad0d; /* Стиль и цвет рамки */
+                border-radius: 8px; /* Скругление углов рамки */
+                overflow: hidden; /* Скрытие контента, выходящего за рамку */
+                float: right;
+                vertical-align: top; /* Выравнивание по правому краю */
+                max-width: 100%;
+            }
+
+            #map {
+                width: 48vw; /* Ширина карты */
+                height: 65vh; /* Высота карты */
+                position: absolute; /* Абсолютное позиционирование */
+                max-width: 100%;
+            }
+        {% endblock %}
+
+        .sidebar {
+            width: 49.5vw;
+            height: 200vh;
+            float: left;
+            background: rgba(19, 35, 47, 0.9);
+            padding: 0;
+            max-width: 100%;
+            border-radius: 0;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 20px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            margin-bottom: 0;
+            border-bottom: 0;
+             border-top: 0;
+        }
+
+        .lower-content {
+            width: 48vw;
+            height: 121.5vh;
+            float: right;
+            background: rgba(19, 35, 47, 0.9);
+            padding: 0;
+            max-width: 100vw;
+            border-radius: 0;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 20px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            margin-bottom: 0;
+            border-bottom: 0;
+            min-height: 121.5vh;
+            min-width: 49vw;
+            z-index: 1;
+        }
+        
+        #lower-content-container {
+                position: relative;
+                width: 48.05vw; /* Ширина рамки */
+                height: 65vh; /* Высота рамки */
+                margin: 0; /* Отступы сверху и снизу для центрирования по вертикали */
+                border: 8px solid #06ad0d; /* Стиль и цвет рамки */
+                border-radius: 0; /* Скругление углов рамки */
+                overflow: hidden; /* Скрытие контента, выходящего за рамку */
+                float: right;
+                vertical-align: top; /* Выравнивание по правому краю */
+                max-width: 100%;
+            z-index: 2;
+}
+        .policy-container {
+            position: relative;
+            align-items: flex-start;
+            font-family: 'Arial', sans-serif;
+        }
+    .end-content {
+        width: 100%;
+            display: inline-block;
+            background: rgba(0, 22, 40, 0.9);
+            font-size: 25px;
+            color: white;
+            position: relative;
+            min-width: 100%;
+        }
+.footer-container {
+  display: flex;
+  align-items: flex-start;
+    font-family: 'Arial', sans-serif;
+}
+
+.menu-section, .social-section {
+  display: flex;
+  flex-direction: column;
+  margin: 0 17vw; /* Добавляем небольшой отступ с обеих сторон */
+}
+
+.menu-section h3, .social-section h3 {
+  font-size: 1em; /* Установите необходимый размер шрифта для заголовков */
+  color: #b9b9b9; /* Белый цвет текста для заголовков */
+  margin-bottom: 0.5em; /* Отступ снизу у заголовков */
+}
+
+.menu-section ul, .social-section ul {
+  list-style: none;
+    font-size: 0.8em;
+  padding: 0.1em;
+  margin: 0;
+}
+.menu-section li , .social-section li  {
+  margin-bottom: 0.4em; 
+}
+.menu-section li a, .social-section li a {
+  color: #9d9d9d; /* Белый цвет текста для пунктов списка */
     cursor: pointer;
-    font-size: 15px;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: rgba(19, 35, 47, 0.9);;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: #ffffff;
-    padding: 12px 16px;
     text-decoration: none;
-    display: block;
+}
+.menu-section li a:hover, .social-section li a:hover  {
+  color: #0af814;
+    text-decoration: underline;
+}
+    .solid-line {
+    border-top: 1px solid #b9b9b9; /* Replace with the color you want */
+    margin-top: 0.4em;  /* Adjust the margin as needed */
+    margin-bottom: 0.4em;  /* Adjust the margin as needed */
+}
+.educational-disclaimer p{
+  color: #9d9d9d; 
+    text-align: center;
+    font-size: 0.7em;
+    margin: 0;
+}
+    .img-logo {
+    width: 10vw; /* or any size */
+    height: auto; /* maintain aspect ratio */
+}
+
+    
+@media only screen and (max-width: 768px) {
+  /* Устанавливаем ширину всех основных контейнеров на 100% */
+  #map, #map-container, .end-content {
+    width: 100%;
+    max-width: 100%; /* Убираем максимальную ширину, если она была задана */
+    float: none; /* Убираем обтекание */
+    margin: 0 auto; /* Убираем внешние отступы и выравниваем по центру */
+    padding: 0; /* Обнуляем внутренние отступы */
+    box-shadow: none; /* Убираем тени, если они есть */
+    border: none; /* Убираем рамки */
+    overflow: hidden; /* Обрезаем содержимое, выходящее за пределы элемента */
+    position: relative; /* Убедитесь, что позиционирование не нарушает поток */
+  }
+    .sidebar{
+        width: 100%;
+    float: none;
+    max-width: none;
+    height: auto; /* Если вы хотите, чтобы высота была автоматически расчитана */
+    padding: 0; /* Если требуется сбросить внутренние отступы */
+    margin: 0 auto; 
+        border: none;
+        overflow: hidden;
+    }
+    .lower-content, #lower-content-container {
+    width: 100%;
+    float: none;
+    max-width: none;
+    height: auto; /* Если вы хотите, чтобы высота была автоматически расчитана */
+    padding: 0; /* Если требуется сбросить внутренние отступы */
+    margin: 0 auto; 
+        border: none;
+        overflow: hidden;/* Убедитесь, что нет внешних отступов, которые мешают ширине 100% */
+  }
+   #lower-content-container {
+    width: 97%;
+    float: none;
+    max-width: none;
+    height: auto; /* Если вы хотите, чтобы высота была автоматически расчитана */
+    padding: 0; /* Если требуется сбросить внутренние отступы */
+    margin: 0 auto; 
+        border: none;
+        overflow: hidden;/* Убедитесь, что нет внешних отступов, которые мешают ширине 100% */
+  }
+  .display-flex-colm {
+    flex-direction: column;
+  }
+  
+  .text-and-image {
+    width: 100%;
+  }
+  .arrow-wrapper{
+      
+  }
+  
+  #attach {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: auto;
+  }
+  
+  .text-and-image img {
+    width: 50px; /* Это заставит изображение масштабироваться и подстраиваться под ширину блока */
+    height: 50px; /* Это сохранит пропорции изображения */
+  }
+  .search-container input[type="text"] {
+    width: calc(100% - 16px); /* Учитываем padding */
+    margin: 0 8px; /* Добавляем небольшой внешний отступ с боков */
+  }
+
+  .dropdown-content {
+    width: 100%; /* Раскрывающееся меню на всю ширину */
+  }
+
+  /* Для изображений */
+  .img-logo {
+    width: 80%; /* Уменьшаем размер логотипа на мобильных */
+    height: auto; /* Сохраняем пропорции */
+    display: block; /* Убедитесь, что логотип блочный */
+    margin: 0 auto; /* Выравниваем по центру */
+  }
+
+  /* Стили для футера */
+  .footer-container, .menu-section, .social-section {
+    flex-direction: column; /* Стекаем элементы вертикально */
+    margin: 0 auto; /* Выравниваем по центру */
+  }
+
+  .menu-section ul, .social-section ul {
+    padding: 0; /* Обнуляем padding */
+  }
+
+  .menu-section li, .social-section li {
+  }
+  .top-panel {
+    flex-wrap: wrap; /* Позволяет элементам переноситься на новую строку */
+    justify-content: space-between; /* Распределяет пространство между элементами */
+  }
+
+  /* Меню будет располагаться по левому краю */
+  #hamburger, .search-container{
+    order: 1; /* Первый в потоке */
+    justify-content: center; /* Центрирует поле поиска */
+    margin-top: 0; /* Добавляет отступ сверху */
+  }
+  
+
+  /* Кнопки Войти и Регистрация будут в отдельной строке */
+  .button-container {
+    order: 3; /* Третий в потоке */
+    width: 100%; /* Занимает всю ширину строки */
+    justify-content: center; /* Центрирует кнопки */
+    margin-top: 10px; /* Добавляет отступ сверху */
+  }
+
+  .button-container a {
+    margin-right: 10px; /* Добавляет отступ между кнопками */
+  }
+  nav.clear {
+  top: 70px;
+  margin-left: -70%; /* This might need to be changed to 0 when the menu is active */
+  z-index: 2;
+  width: 70%; /* Adjust the width to ensure enough space for text */
+  height: 100%;
+  background: rgba(19, 35, 47, 0.9);
+  overflow-x: hidden; /* Ensure that horizontal scroll does not appear */
+  overflow-y: auto; /* Enable vertical scrolling if the menu is longer than the screen */
+}
+
+nav ul {
+  list-style: none;
+  padding-left: 0; /* Ensure padding does not affect the width */
+}
+
+nav li a {
+  white-space: nowrap; /* This will ensure the text does not wrap and stays in one line */
+  overflow: hidden; /* This will hide text that overflows the width of 'nav li a' */
+  text-overflow: ellipsis; /* This will add '...' at the end of the text that overflows */
+  display: block; /* This makes the 'a' tag a block element, allowing 'overflow' and 'text-overflow' to work */
+  width: 100%; /* This makes sure the 'a' tag takes up the full width of its parent 'li' */
+  box-sizing: border-box; /* This ensures that padding and borders are included in the width */
     font-size: 15px;
 }
-
-.user-icon i {
-    font-size: 20px;
+nav ul li {
+    position: relative;
+    border-bottom: 1px solid #ffffff; 
+}
+nav ul li:last-child {
+    border-bottom: none;
+}
 }
 
-.dropdown-content a:hover {
-    background-color: #13a178;
+
+#attach {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+  width: 45%;
+  margin: 20px;
+  padding: 10px;
+  background-color: #070761;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  position: relative; /* Added for pseudo-elements positioning */
+  overflow: hidden; /* Hide the overflowing parts of the pseudo-elements */
 }
 
+#attach:before,
+#attach:after,
+#attach div:before,
+#attach div:after {
+  content: '';
+  position: absolute;
+  background-color: #FFFFFF;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+/* Top and bottom borders */
+#attach:before { top: 0; left: 50%; width: 0; height: 1px; }
+#attach:after { bottom: 0; right: 50%; width: 0; height: 1px; }
+
+/* Left and right borders */
+#attach div:before { top: 50%; left: 0; width: 1px; height: 0; }
+#attach div:after { bottom: 50%; right: 0; width: 1px; height: 0; }
+
+#attach:hover:before { left: 0; width: 100%; transition: width 0.6s ease-in-out; }
+#attach:hover:after { right: 0; width: 100%; transition: width 0.6s ease-in-out; }
+
+#attach:hover div:before { top: 0; height: 100%; transition: height 0.6s ease-in-out 0.6s; }
+#attach:hover div:after { bottom: 0; height: 100%; transition: height 0.6s ease-in-out 0.6s; }
+
+.arrow-wrapper {
+  transition: transform 0.3s ease; /* Smooth transition for the arrow */
+}
+
+#attach:hover .arrow-wrapper {
+  transform: translateX(10px); /* Moves arrow to the right on hover */
+}
+
+/* Additional styling for text and image layout */
+.text-and-image {
+  display: flex;
+  align-items: center;
+  color: white; /* Text color */
+}
+
+.text-and-image img {
+  margin-right: 20px;
+}
+
+.arrow-svg {
+  fill: white; /* SVG color */
+  min-width: 50px; /* Set a min-width for the svg */
+}
     </style>
+<link rel="icon" href="/media/tab-icon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+<div class="background-content">
+<div class="top-panel">
+    <div id="hamburger">
+        <div></div>
+        <div></div>
+        <div></div>
+        <a>Menu</a>
+    </div>
+    <div class="search-container">
+        <label>
+            <input type="text" placeholder="Поиск по сайту">
+        </label>
+    </div>
 
+    <div class="button-container">
+        {% if user.is_authenticated %}
+            <div class="user-menu" onclick="toggleMenu()" onmouseleave="closeMenu()">
+                <span class="user-name">{{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
+                <div id="dropdown" class="dropdown-content">
+                    <a href="{% url 'profile_link' %}"><i class="fas fa-user-circle"></i> Личный кабинет</a>
+                    <a href="#notifications"><i class="fas fa-bell"></i> Уведомления </a>
+                    <form action="{% url 'logout' %}" method="post" id="logout-form" style="display:none;">
+                        {% csrf_token %}
+                        <input type="submit" value="Выйти" style="display:none;">
+                    </form>
+                    <a href="#" onclick="document.getElementById('logout-form').submit();"><i
+                            class="fas fa-sign-out-alt"></i> Выйти</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="{% url 'login-signup' %}?tab=login" class="tab login">Войти</a>
+            <a href="{% url 'login-signup' %}?tab=signup" class="tab signup">Регистрация</a>
+        {% endif %}
+    </div> 
+</div>
+    
+<div id="container">
+    <nav class="clear">
+            <link rel="stylesheet" type="text/css" media="all" href="/static/style.css"/>
+  <ul>
+    <li><a href="#"><i class="fas fa-home"></i> На главную</a></li>
+       <li><a href="{% url 'appoint_doctor' %}"><i class="fas fa-solid fa-stethoscope"></i> Запись к врачу</a></li>
+    <li><a href="#"><i class="fas fa-directions"></i>Активные направления</a></li>
+    <li><a href="#"><i class="fas fa-vial"></i> Анализы</a></li>
+    <li><a href="#"><i class="fas fa-notes-medical"></i> Платежи и статус ОСМС</a></li>
+    <li><a href="#"><i class="fas fa-book-medical"></i> Медицинская история</a></li>
+      <li><a href='https://i-teka.kz/almaty/medicamentsalphabetically' target="_blank"><i class="fas fa-duotone fa-pills"></i> Поиск лекарств</a></li>
+  </ul>
+</nav>
+
+    <div id="content">
+        <div class="jquery-script-ads">
+            <script type="text/javascript"><!--
+            google_ad_client = "ca-pub-2783044520727903";
+            /* jQuery_demo */
+            google_ad_slot = "2780937993";
+            google_ad_width = 728;
+            google_ad_height = 90;
+            //-->
+            </script>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            </script>
+        </div>
+    </div>
+</div>
+{% block content %}
+<div id="map-container" style="color: #d5d4d4; text-align: center">
+    <h2>Клиники на карте Алматы</h2>
+    <p>Используйте карту ниже, чтобы найти клиники рядом с вами.</p>
+    <div id="map" style="width: 100%; height: 100%;"></div>
+</div>
+
+
+<div class="sidebar" style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #cdcdcd; ">
+
+    <div id="side" style="border: 2px solid #033506; margin: 20px"><h1 style="font-size: 30px; text-align: center;">Добро пожаловать в Ваш личный медицинский портал</h1>
+    <p style="padding-left: 25px; padding-right: 10px; font-size: 20px;">Поиск лучших медицинских специалистов, запись на прием и управление вашими медицинскими данными еще никогда не были такими простыми. Наша миссия — наполнить каждый день заботой о вашем благополучии. В портале клиник Алматы каждый шаг к здоровью становится легче и доступнее. Мы обеспечиваем лёгкий доступ к высококачественным медицинским услугам и заботимся о каждом аспекте вашего здоровья. Начните путь к лучшей жизни сегодня.</p>
+</div>
+    <div class="display-flex-colm" style="display: flex">
+<div id="attach" onclick="location.href='/attach-page/';">
+  <div class="text-and-image">
+    <img src="/media/removebg.png" style="width: 150px; height: 150px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Оформить прикрепление к поликлинике</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    <div id="attach" style="background-color: #018c65">
+  <div class="text-and-image">
+    <img src="/media/preview.png" style="width: 180px; height: 120px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Быстро и легко: проверьте анализы онлайн</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    </div>
+    
+    <div class="display-flex-colm" style="display: flex">
+<div id="attach" style="background-color: #018c65" onclick="location.href='appoint_doctor'">
+  <div class="text-and-image">
+    <img src="/media/img.png" style="width: 170px; height: 170px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Запись к врачу за один клик — позаботьтесь о своем здоровье</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    <div id="attach" onclick="window.open('https://i-teka.kz/almaty/medicamentsalphabetically', '_blank');">
+  <div class="text-and-image">
+    <img src="/media/drogue.png" style="width: 180px; height: 120px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Найдите нужные медикаменты за секунды</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    </div>
+        <div class="display-flex-colm" style="display: flex">
+<div id="attach">
+  <div class="text-and-image">
+    <img src="/media/img_1.png" style="width: 175px; height: 135px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Управляйте своими медицинскими направлениями легко и удобно</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    <div id="attach" style="background-color: #018c65">
+  <div class="text-and-image">
+    <img src="/media/img_2.png" style="width: 180px; height: 110px;"> <!-- Replace with your image path -->
+    <p style="font-size: 20px;">Проверьте вашу медицинскую страховку за мгновение</p>
+  </div>
+  <div class="arrow-wrapper">
+    <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <line x1="5" y1="25" x2="45" y2="25" stroke="white" stroke-width="2"/>
+      <polyline points="35,15 45,25 35,35" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+    </div>
+    
+    
+    <div id="si" style="border: 2px solid #033506; margin: 20px;">
+        <h4 style="text-align: center; font-size: 25px;">Медицинские услуги нового поколения</h4>
+        <p style="padding-left: 25px;">Мы объединяем высокие технологии и чуткое отношение специалистов, чтобы предоставить вам лучший опыт в уходе за здоровьем. С нами управление вашим здоровьем становится проще и удобнее. Мы предлагаем инновационный подход к медицинской помощи и здоровому образу жизни.</p>
+    </div>
+<div class="lower-con" style="border: 2px solid #033506; margin: 20px;"><h3 style="text-align: center; font-size: 25px;">Почему выбирают нас</h3>
+    <p style="padding-right:10px; padding-left: 10px ">Мы предлагаем безопасный, надежный и быстрый способ управления вашим здоровьем и здоровьем вашей семьи. Наш портал позволяет вам вести электронную историю ваших посещений, управлять медицинскими записями и планировать ваше лечение в удобное для вас время.</p>
+</div>
+
+<div class="services" style="border: 2px solid #033506; margin: 20px;">
+  <h3 style="text-align: center; font-size: 25px;">Полный спектр медицинских услуг</h3>
+  <ul>
+    <li>Онлайн запись к врачу без очередей</li>
+    <li>Электронные направления и быстрые результаты анализов</li>
+    <li>Удобный просмотр и оплата услуг в один клик</li>
+    <li>Поиск лекарств в аптеках г.Алматы</li>
+    <li>Личный кабинет с полным контролем медицинской истории</li>
+      <li>Доступ к электронной медицинской карте 24/7</li>
+      <li>Удобный способ прикрепления к поликлиникам города</li>
+  </ul>
+</div>
+<div id="si" style="border: 2px solid #033506; margin: 20px;">
+        <h4 style="text-align: center; font-size: 25px;">Забота о здоровье доступна каждому</h4>
+        <p style="padding-left: 25px;">Всегда на связи, всегда важны для нас. Мы работаем для вашего спокойствия и благополучия. Сконцентрируйтесь на важном, оставив заботы о здоровье нам.</p>
+    </div>
+</div>
+
+    
+    
+<div class="lower-content" style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #cdcdcd;">
+    <div id="lower-content-container" style="margin-bottom: 20px">
+    <img src="/media/4.webp" class="img-logo" style="width: 100%; height: 100%;">
+</div>
+    <div class="policy-container">
+    <div class="privacy-policy" style="border: 2px solid #033506; margin: 20px;">
+        <h4 style="text-align: center; font-size: 25px;">Политика конфеденциальности</h4>
+        <p style="padding-left: 20px; padding-right: 20px">Ваша приватность - наш приоритет. В рамках нашей Политики конфиденциальности мы обеспечиваем непрерывную защиту и безопасность ваших персональных данных. Мы стремимся к прозрачности в обработке вашей информации и используем её исключительно для улучшения вашего пользовательского опыта, уделяя внимание не только законодательным требованиям, но и вашему комфорту и доверию.</p>
+    </div>
+    <div class="pri-policy" style="border: 2px solid #033506; margin: 20px;">
+        <h4 style="text-align: center; font-size: 25px;">Пользовательское соглашение</h4>
+        <p style="padding-left: 20px; padding-right: 20px">Присоединяясь к нашему сообществу, вы соглашаетесь с условиями, которые направлены на создание позитивного и продуктивного взаимодействия. Наше Пользовательское соглашение задает правила и руководство по использованию наших услуг, обеспечивая вам полное понимание ваших прав и обязанностей. Мы ценим ваш выбор и стремимся предоставить вам сервисы высшего качества.</p>
+    </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+ <div style="clear: both;"></div>
+<div class="end-content" style="border-top: 1.5px solid #0b520e">
+<div class="footer-container">
+  <div class="menu-section">
+    <h3>Главное</h3>
+    <ul>
+        <li><a href="{% url 'appoint_doctor' %}"><i class="fas fa-solid fa-stethoscope"></i> Запись к врачу</a></li>
+    <li><a href="#"><i class="fas fa-directions"></i> Активные направления</a></li>
+    <li><a href="#"><i class="fas fa-vial"></i>Анализы</a></li>
+    <li><a href="#"><i class="fas fa-notes-medical"></i>Статус ОСМС</a></li>
+    <li><a href="#"><i class="fas fa-book-medical"></i> Медицинская история</a></li>
+      <li><a href='https://i-teka.kz/almaty/medicamentsalphabetically' target="_blank"><i class="fas fa-duotone fa-pills"></i> Поиск лекарств</a></li>
+    </ul>
+  </div>
+  <div class="social-section">
+    <h3>Я в социальных сетях</h3> <!-- Если нужен заголовок для социальных сетей -->
+    <ul>
+        <li><a href="https://www.instagram.com/unique_vern/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+        <li><a href="https://www.linkedin.com/in/esbol-zholdasbai-008abb221" target="_blank"><i class="fab fa-linkedin-in"></i> LinkedIn</a></li>
+        <li><a href="https://t.me/Xodnd99" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram</a></li>
+        <li><a href="mailto:esbolyegizekov@gmail.com?subject=Inquiry from Your Website&body=Hello,%0D%0AI am contacting you from your website and would like to inquire about...%0D%0A%0D%0ABest regards," target="_blank"><i class="fas fa-envelope"></i> esbolyegizekov@gmail.com</a></li>
+  </ul>
+  </div>
+</div>
+    <div class="solid-line"></div>
+    <div class="educational-disclaimer">
+    <p>Внимание: Содержимое данного сайта разработано исключительно в образовательных целях и представляет собой дипломный проект. Этот сайт не является официальным источником медицинских данных или информации и не должен использоваться в качестве основы для принятия медицинских решений.</p>
+    <p>Пожалуйста, всегда обращайтесь к квалифицированным медицинским работникам для получения надежной медицинской информации и консультаций. Вся информация, представленная здесь, предназначена для демонстрации навыков веб-разработки и не предполагает профессиональные медицинские рекомендации.</p>
+    <p><img src="/media/Logotip-AUYES-na-angl.png" class="img-logo"></p>
+    </div>
+</div>
+</div>
     <script>
-        function toggleMenu() {
-    var dropdown = document.getElementById("dropdown");
-    var userName = document.querySelector(".user-name");
-
-    // Установка ширины dropdown равной ширине userName
-    dropdown.style.width = `${userName.offsetWidth}px`;
-
-    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-}
-    </script>
-<script>
 function toggleMenu() {
     var dropdown = document.getElementById("dropdown");
     var userName = document.querySelector(".user-name");
@@ -166,97 +743,32 @@ function closeMenu() {
     dropdown.style.display = "none";
 }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/static/jquery.hamburger.js"></script>
+<script type="text/javascript">
 
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40
-&lang=ru_RU" type="text/javascript"></script>
-    <script type="text/javascript">
-        ymaps.ready(init);
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
 
-        function init() {
-            var map = new ymaps.Map('map', {
-                center: [43.238293, 76.945465], // Координаты центра карты (например, центр города)
-                zoom: 11
-            });
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
 
-            // Создаем коллекцию для хранения меток
-            var placemarks = new ymaps.GeoObjectCollection();
+    function showUserMenu() {
+        document.getElementById("userMenu").classList.remove("hidden");
+    }
 
-            // Получаем координаты города Алматы
-            ymaps.geocode('Алматы').then(function (res) {
-                var bounds = res.geoObjects.get(0).properties.get('boundedBy');
-
-                // Фильтр по категориям медицинских организаций
-                var categories = ['поликлиника', 'больница', 'клиника'];
-
-                // Поиск медицинских организаций в городе Алматы по категориям
-                categories.forEach(function (category) {
-                    ymaps.search(category, {
-                        boundedBy: bounds,
-                        provider: 'yandex#search'
-                    }).then(function (res) {
-                        // Отображение найденных организаций
-                        res.geoObjects.each(function (geoObject) {
-                            var coords = geoObject.geometry.getCoordinates();
-                            var name = geoObject.properties.get('name'); // Получаем название организации
-                            var description = geoObject.properties.get('description'); // Получаем описание организации
-                            var url = geoObject.properties.get('url'); // Получаем ссылку на сайт организации
-
-                            // Создаем метку
-                            var placemark = new ymaps.Placemark(coords, {}, {
-                                preset: 'islands#redDotIconWithCaption' // Красный круг с красным плюсиком и названием организации
-                            });
-
-                            // Добавляем метку на карту и в коллекцию
-                            map.geoObjects.add(placemark);
-                            placemarks.add(placemark);
-
-                            // Добавляем обработчик события click для метки
-                            placemark.events.add('click', function () {
-                                // Создаем информационное окно организации
-                                var balloonContent = '<div>' + description + '</div>';
-                                if (url) {
-                                    balloonContent += '<div class="link-container"><span style="margin-right: 5px;">&#x1F310;</span><a href="' + url + '" target="_blank">' + url + '</a><br></div>'; // Добавляем отступы между кнопкой и ссылкой
-                                }
-                                balloonContent += '<div><button id="attachButton" style="background-color: #0078d4; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button><br></div>';
-
-                                map.balloon.open(coords, {
-                                    contentHeader: name,
-                                    contentBody: balloonContent
-                                });
-
-                                // Добавляем обработчик события click для кнопки "Прикрепиться"
-                                setTimeout(function () {
-                                    document.getElementById('attachButton').addEventListener('click', function () {
-                                        window.location.href = 'registration/login.html?tab=login'; // Замените на URL вашей страницы входа
-                                    });
-                                }, 100); // Ждем немного, чтобы информационное окно успело открыться
-                            });
-
-                            // Добавляем обработчик события mouseenter для метки
-                            placemark.events.add('mouseenter', function () {
-                                // Показываем название организации при наведении на метку
-                                placemark.properties.set('iconCaption', name);
-                            });
-
-                            // Добавляем обработчик события mouseleave для метки
-                            placemark.events.add('mouseleave', function () {
-                                // Убираем название организации при уходе курсора с метки
-                                placemark.properties.set('iconCaption', '');
-                            });
-                        });
-                    });
-                });
-
-                // Добавляем коллекцию меток на карту
-                map.geoObjects.add(placemarks);
-            });
-        }
-
-    </script>
-
-</head>
-<body>
-
+    function hideUserMenu() {
+        document.getElementById("userMenu").classList.add("hidden");
+    }
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -285,105 +797,215 @@ function closeMenu() {
         }
     });
 </script>
+{% block scripts %}
+    
+ <script src="https://api-maps.yandex.ru/2.1/?apikey=ea4321bf-6d4f-4032-b6f7-487f44829a40&lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        var isUserAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+    </script>
+    <script type="text/javascript">
+    var currentRoute; 
+        ymaps.ready(init);
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+        function init() {
+            var map = new ymaps.Map('map', {
+                center: [43.238293, 76.945465], // Координаты центра карты (например, центр города)
+                zoom: 14
+            });
 
-<div class="top-panel">
-    <div id="hamburger">
-        <div></div>
-        <div></div>
-        <div></div>
-        <a>Menu</a>
-    </div>
-    <div class="search-container">
-        <label>
-            <input type="text" placeholder="Поиск по сайту">
-        </label>
-    </div>
+            // Создаем коллекцию для хранения меток
+            var placemarks = new ymaps.GeoObjectCollection();
+            // Получаем координаты города Алматы
+            ymaps.geocode('Алматы').then(function (res) {
+                var bounds = res.geoObjects.get(0).properties.get('boundedBy');
+                // Фильтр по категориям медицинских организаций
+                var categories = ['Городская поликлиника', 'Взрослые поликлиники', 'Поликлиника', 'Клиника', 'Медцентр', 'Детская поликлиника', 'Поликлиника для взрослых', 'Поликлиника для взрослых, детская поликлиника', 'Медцентр, клиника', 'Поликлиника для взрослых, филиал'];
 
-    <div class="button-container">
-        {% if user.is_authenticated %}
-            <div class="user-menu" onclick="toggleMenu()" onmouseleave="closeMenu()">
-                <span class="user-name">{{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
-                <div id="dropdown" class="dropdown-content">
-                    <a href="#profile"><i class="fas fa-user-circle"></i> Личный кабинет</a>
-                    <a href="#notifications"><i class="fas fa-bell"></i> Уведомления </a>
-                    <form action="{% url 'logout' %}" method="post" id="logout-form" style="display:none;">
-                        {% csrf_token %}
-                        <input type="submit" value="Выйти" style="display:none;">
-                    </form>
-                    <a href="#" onclick="document.getElementById('logout-form').submit();"><i
-                            class="fas fa-sign-out-alt"></i> Выйти</a>
-                </div>
-            </div>
-        {% else %}
-            <a href="{% url 'login-signup' %}?tab=login" class="tab login">Войти</a>
-            <a href="{% url 'login-signup' %}?tab=signup" class="tab signup">Регистрация</a>
-        {% endif %}
-    </div> 
-</div>
+                // Поиск медицинских организаций в городе Алматы по категориям
+                categories.forEach(function (category) {
+                    ymaps.search(category, {
+                        boundedBy: bounds,
+                        provider: 'yandex#search'
+                    }).then(function (res) {
+                        res.geoObjects.each(function (geoObject) {                            
+                            var coords = geoObject.geometry.getCoordinates();
+                            var name = geoObject.properties.get('name'); // Получаем название организации
+                            var address = geoObject.properties.get('address'); // Получаем описание организации
+                            var url = geoObject.properties.get('url'); // Получаем ссылку на сайт организации
+                            var phoneNumbers = geoObject.properties.get('phoneNumbers');
+                            var hours = geoObject.properties.get('companyMetaData.Hours');
+                            var ext_id = geoObject.properties.get('companyMetaData').id;
+                            var hoursText = hours ? hours.text : 'Не указано';
+                            var placemark = new ymaps.Placemark(coords, {}, {
+                                preset: 'islands#redDotIconWithCaption'
+                            });
+                            var postData = {
+                                name: geoObject.properties.get('name'),
+                                address: geoObject.properties.get('address'),
+                                url: geoObject.properties.get('url'),
+                                phoneNumbers: geoObject.properties.get('phoneNumbers').join(', '),  // Соединяем телефоны в строку
+                                hoursText: hoursText,
+                                ext_id: ext_id
+                            };
+                            // Отправляем данные
+                            sendDataToDjango(postData);
+                            // Добавляем метку на карту и в коллекцию
+                            map.geoObjects.add(placemark);
+                            placemarks.add(placemark);
+
+                            // Создаем информационное окно организации и добавляем кнопку "Прикрепиться"
+                            function createBalloonContent(name, address, url, phoneNumbers, hoursText) {
+                                var balloonContent = '<div>' + address + '</div>';
+                                if (url) {
+                                    balloonContent += '<div class="link-container"><span style="margin-right: 5px;">&#x1F310;</span><a href="' + url + '" target="_blank">' + url + '</a></div>';
+                                }
+
+                                if (phoneNumbers && phoneNumbers.length > 0) {
+                                    // Показываем только первый номер и кнопку для раскрытия остальных
+                                    balloonContent += '<div class="phone-container">';
+                                    balloonContent += '<span style="margin-right: 5px;">&#x260E;</span>' + phoneNumbers[0];
+                                    balloonContent += '</div>';
+                                }
+
+                                balloonContent += '<div class="balloon-schedule"><span style="margin-right: 7px;">&#x1F550;</span>' + hoursText + '</div>';
+                                balloonContent += '<div><button id="showRouteButton" style="display: flex; align-items: center; justify-content: center; background-color: #0078d4; margin-bottom: 8px; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m8.82929429 20c-.41183641 1.1651924-1.52307546 2-2.82929429 2-1.65685425 0-3-1.3431458-3-3s1.34314575-3 3-3c1.30621883 0 2.41745788.8348076 2.82929429 2h8.67070571c1.3807119 0 2.5-1.1192881 2.5-2.5s-1.1192881-2.5-2.5-2.5h-11c-2.48528137 0-4.5-2.0147186-4.5-4.5 0-2.48528137 2.01471863-4.5 4.5-4.5h3.08578644l-1.29289322-1.29289322 1.41421356-1.41421356 3.70710682 3.70710678-3.70710682 3.70710678-1.41421356-1.41421356 1.29289322-1.29289322h-3.08578644c-1.38071187 0-2.5 1.11928813-2.5 2.5s1.11928813 2.5 2.5 2.5h11c2.4852814 0 4.5 2.0147186 4.5 4.5s-2.0147186 4.5-4.5 4.5zm-2.82929429-2c-.55228475 0-1 .4477153-1 1s.44771525 1 1 1 1-.4477153 1-1-.44771525-1-1-1zm12-16c1.6568542 0 3 1.34314575 3 3s-1.3431458 3-3 3-3-1.34314575-3-3 1.3431458-3 3-3zm0 2c-.5522847 0-1 .44771525-1 1s.4477153 1 1 1 1-.44771525 1-1-.4477153-1-1-1z" fill-rule="evenodd" fill="white"/></svg> Показать маршруты</button></div>';
+                                balloonContent += '<div><button id="attachButton" style="background-color: #0078d4;  color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Прикрепиться</button></div>';
+
+                                return balloonContent;
+                            }
+
+                            function openBalloon(coords, name, address, url, phoneNumbers, hoursText) {
+                                if (currentRoute) {
+                                    map.geoObjects.remove(currentRoute);
+                                    currentRoute = null;
+                                }
+                                map.balloon.open(coords, {
+                                    contentHeader: name,
+                                    contentBody: createBalloonContent(name, address, url, phoneNumbers, hoursText)
+                                }, {
+                                    // Включаем опцию автоматического контроля отступов
+                                    adjustMapMargin: true
+                                });
+                                var clinicExtId = ext_id;
+                                // Добавляем обработчики событий после того, как баллун открыт
+                                setTimeout(function () {
+                                    var attachButton = document.getElementById('attachButton');
+                                    if (attachButton) {
+                                        attachButton.addEventListener('click', function () {
+                                            if (!isUserAuthenticated) {
+                                                // Добавляем сообщение об ошибке в баллун
+                                                var balloonData = map.balloon.getData();
+                                                balloonData.contentBody += '<div style="color: red;">Пожалуйста, авторизуйтесь для выполнения этого действия.</div>';
+                                                map.balloon.setData(balloonData);
+                                                // Пересчитываем размер баллуна
+                                                map.balloon.update();
+                                            } else {
+                                                window.location.href = 'attach-page';
+                                            }
+                                        });
+                                    }
+                                    var showRouteButton = document.getElementById('showRouteButton');
+                                    if (showRouteButton) {
+                                        showRouteButton.addEventListener('click', function () {
+                                            // Сначала закрываем баллун
+                                            map.balloon.close();
+
+                                            // Затем удаляем предыдущий маршрут, если он существует
+                                            if (currentRoute) {
+                                                map.geoObjects.remove(currentRoute);
+                                                currentRoute = null;
+                                            }
+                                            navigator.geolocation.getCurrentPosition(function (position) {
+                                                var userLocation = [position.coords.latitude, position.coords.longitude];
+                                                ymaps.route([userLocation, coords]).then(function (route) {
+                                                    currentRoute = route;
+                                                    map.geoObjects.add(route);
+
+                                                    // Получаем границы первого пути маршрута
+                                                    var bounds = route.getPaths().get(0).getBounds();
+
+                                                    setTimeout(function () {
+                                                        map.setBounds(bounds, {
+                                                            checkZoomRange: true,
+                                                            duration: 500
+                                                        }).then(function () {
+                                                            if (map.getZoom() > 10) {
+                                                                map.setZoom(10);
+                                                            }
+                                                        }, function (err) {
+                                                            console.log(err);
+                                                        });
+                                                    }, 0);
+                                                });
+                                            }, function (error) {
+                                                alert('Не удалось получить местоположение: ' + error.message);
+                                            });
+                                        });
+                                    }
+                                });
+                            }
 
 
+                            placemark.events.add('click', function () {
+                                openBalloon(coords, name, address, url, phoneNumbers, hoursText);
+                            });
 
-<div id="map-container">
-    <div id="map"></div>
-</div>
 
+                            // Добавляем обработчик события mouseenter для метки
+                            placemark.events.add('mouseenter', function () {
+                                // Показываем название организации при наведении на метку
+                                placemark.properties.set('iconCaption', name);
+                            });
 
-<div id="container">
-    <nav class="clear">
-        <link rel="stylesheet" type="text/css" media="all" href="/static/style.css"/>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Share</a></li>
-            <li><a href="#">Settings</a></li>
-        </ul>
-    </nav>
-    <div id="content">
-        <div class="jquery-script-ads">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-2783044520727903";
-            /* jQuery_demo */
-            google_ad_slot = "2780937993";
-            google_ad_width = 728;
-            google_ad_height = 90;
-            //-->
-            </script>
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            </script>
-        </div>
-    </div>
-</div>
+                            // Добавляем обработчик события mouseleave для метки
+                            placemark.events.add('mouseleave', function () {
+                                // Убираем название организации при уходе курсора с метки
+                                placemark.properties.set('iconCaption', '');
+                            });
+                        });
+                    });
+                });
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="/static/jquery.hamburger.js"></script>
-<script type="text/javascript">
+                // Добавляем коллекцию меток на карту
+                map.geoObjects.add(placemarks);
+            });
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-36251023-1']);
-    _gaq.push(['_setDomainName', 'jqueryscript.net']);
-    _gaq.push(['_trackPageview']);
+            function sendDataToDjango(postData) {
+                var csrftoken = getCookie('csrftoken');  // Получите CSRF токен
 
-    (function () {
-        var ga = document.createElement('script');
-        ga.type = 'text/javascript';
-        ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(ga, s);
-    })();
+                // Отправка POST-запроса к Django
+                fetch('/save_organization/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify(postData)
+                })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.error('Error:', error));
+            }
 
-    function showUserMenu() {
-        document.getElementById("userMenu").classList.remove("hidden");
-    }
-
-    function hideUserMenu() {
-        document.getElementById("userMenu").classList.add("hidden");
-    }
-
-</script>
+            // Получение CSRF токена из cookie
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        }
+    </script>
+{% endblock scripts %}
 </body>
 </html>
+
 

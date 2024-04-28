@@ -1,7 +1,11 @@
 asgiref==3.7.2
-Django==5.0.2
+Django==5.0.4
 django-jquery==3.1.0
 djangorestframework==3.14.0
 pytz==2024.1
 sqlparse==0.4.4
 typing_extensions==4.9.0
+gunicorn
+psycopg2-binary
+django-sslserver
+

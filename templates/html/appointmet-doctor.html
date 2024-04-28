@@ -1,0 +1,473 @@
+{% extends "html/index.html" %}
+{% block extra_styles %}
+    /* Original styles retained and refined for a polished look */
+    #appointment-form-container {
+    background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    width: 800px;
+    max-height: auto;
+    min-height: 60vh;
+    max-width: 75%;
+    margin: 40px auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #fff;
+    position: relative;
+    border: 2px solid #0b520e;
+    transition: all 0.25s ease;
+    }
+
+    #appointment-form-container i {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 30px;
+    font-weight: bolder;
+    }
+
+    #appointment-form-container i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+
+    /* Section headings style */
+    #appointment-form-container h3 {
+    font-size: 24px; /* Larger font size for headings */
+    margin-bottom: 10px;
+    border-bottom: 1px solid #4CAF50; /* Underline effect for headings */
+    padding-bottom: 5px;
+    display: inline-block;
+    }
+
+    /* List items with custom bullets */
+    #appointment-form-container ul {
+    list-style: none; /* No default bullets */
+    padding-left: 20px;
+    }
+
+    #appointment-form-container ul li {
+    position: relative; /* For pseudo-element positioning */
+    padding-left: 20px;
+    margin-bottom: 5px;
+    }
+
+    #appointment-form-container ul li:before {
+    content: '•'; /* Custom bullet */
+    color: #4CAF50; /* Bullet color */
+    position: absolute;
+    left: 0;
+    top: 0;
+    }
+
+    /* Styling for links */
+    #appointment-form-container a {
+    color: #4CAF50;
+    text-decoration: none; /* No underline */
+    transition: color 0.25s ease;
+    }
+
+    #appointment-form-container a:hover {
+    text-decoration: underline; /* Underline on hover */
+    color: #66ff66; /* Lighter green on hover */
+    }
+
+    /* More space between sections */
+    .info-section {
+    margin: 20px;
+    }
+
+    /* For the doctor info title */
+    #doctor-info {
+    margin: 20px;
+    }
+
+
+    .button-change-on-hover {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    }
+
+    .button-change-on-hover-submit:hover {
+    background-color: #0b520e; /* Darker shade when hovered */
+    }
+    .button-change-on-hover-submit {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    }
+
+    .button-change-on-hover:hover {
+    background-color: #0b520e; /* Darker shade when hovered */
+    }
+    #book-appointment{
+    margin-top: 20px;
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    }
+    #book-appointment:hover {
+    background-color: #0b520e; /* Darker shade when hovered */
+    }
+    #typing {
+    border: 2px solid #033506;
+    padding: 15px;
+    font-size: 20px;
+    white-space: pre-wrap; /* Чтобы текст переносился */
+    width: 95%; /* Фиксированная ширина для контейнера */
+    color: #b9b9b9;
+
+    }
+    .modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Оставайтесь на месте */
+    left: 0;
+    top: 0;
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    overflow: auto; /* Включите прокрутку, если нужно */
+    background-color: rgb(0,0,0); /* Цвет фона */
+    background-color: rgba(0,0,0,0.8); /* Черный с непрозрачностью */
+    z-index: 1000; /* Убедитесь, что модальное окно находится над другими элементами */
+    }
+
+    .modal-content {
+    background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    width: 40%;
+    margin: 80px auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #fff;
+    position: relative;
+    border: 2px solid #0b520e;
+    transition: all 0.25s ease;
+    height: auto;
+    }
+    .modal-content i {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 30px;
+    font-weight: bolder;
+    }
+
+    .modal-content i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+    #profilePicContainer {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;  
+    margin-right: auto;
+}
+.initials {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px; /* Adjust as needed */
+    background-color: #ccc; /* Your chosen color */
+    color: white;
+    overflow: hidden;
+}
+.upload-profile-pic {
+    width: 30%; /* Width of the button */
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 1px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;  
+    margin-right: auto; 
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+{% endblock %}
+{% block title %}Запись к врачу{% endblock %}
+
+{% block content %}
+    <div id="appointment-form-container" class="form">
+        <i id="user-info-icon" class="far fa-window-close" onclick="redirectToHome()"></i>
+            <div class="info-section" id="clinic-info" style="border: 2px solid #033506; padding: 20px;">
+                {% if attached_clinic %}
+                    <h3>Ваша клиника: {{ attached_clinic.name }}</h3>
+                    <p>Адрес: {{ attached_clinic.address }}</p>
+                    <p>Контакты:</p>
+                    <ul>
+                        {% for phone_number in phone_numbers_list %}
+                            <li>{{ phone_number }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <p>Страница: <a href="{{ attached_clinic.url }}" target="_blank">{{ attached_clinic.url }}</a></p>
+                    <p>Режим работы: {{ attached_clinic.hours_text }}</p>
+                    <button onclick="location.href='/attach-page/'" class="button-change-on-hover">
+                        Выбрать другую клинику
+                    </button>
+                {% else %}
+                    <p>Вы не прикреплены ни к одной поликлинике.</p>
+                {% endif %}
+            </div>
+
+
+            {% if attached_doctor %}
+                <div class="info-section" id="doctor-info" style="border: 2px solid #033506; padding: 15px;">
+                <div id="profilePicContainer" style="display: flex; justify-content: center; align-items: center;">
+                    <img id="doctor-image" src="{{ doctor_image_url }}" alt="Фото врача" style="width:180px; height:180px; object-fit:cover;"></div>
+                    <h3>Ваш врач: <span id="doctor-name">{{ attached_doctor.full_name }}</span></h3>
+                    <p>Специализация: <span id="doctor-specialization">{{ attached_doctor.position }}</span></p>
+                    <p>Email: <span id="doctor-email">{{ attached_doctor.email }}</span></p>
+                    <p>Телефон: <span id="doctor-phone">{{ attached_doctor.phone_number }}</span></p>
+                    <button onclick="openModal()" class="button-change-on-hover">Выбрать другого врача</button>
+                    <link rel="stylesheet" href="/static/mark-your-calendar.css" />
+                    <script src="/static/jquery-3.7.1.js"></script>
+                    <script src="/static/mark-your-calendar.js"></script>
+                    <div id="picker" data-working-days="{{ attached_doctor.working_days }}"></div>
+
+    <div>
+        {% csrf_token %}
+        <p>Вы выбрали дату приема: <span id="selected-date" style="text-decoration: underline;"></span></p>
+        <p>Вы выбрали время приема: <span id="selected-time" style="text-decoration: underline;"></span></p>
+    </div>
+    <script type="text/javascript">
+        (function($) {
+    $(document).ready(function() {
+        // Пример получения рабочих дней из элемента в DOM или откуда-то еще
+        var workingDays = $('#picker').data('working-days').split(',');  // Рабочие дни, как массив
+        var availability = generateTimeSlots(workingDays, '09:00', '17:00', 60);
+
+        $('#picker').markyourcalendar({
+            availability: availability,
+            startDate: new Date(),
+            isMultiple: false,  // Разрешить выбор только одной даты и времени
+            onClick: function(ev, data) {
+                var d = data[0].split(' ')[0];
+                var t = data[0].split(' ')[1];
+                $('#selected-date').html(d);
+                $('#selected-time').html(t);
+            },
+            onClickNavigator: function(ev, instance) {
+                
+            }
+        });
+       
+
+        function generateTimeSlots(workingDays, startTime, endTime, slotDuration) {
+            var slots = [[], [], [], [], [], [], []];
+            var daysOfWeek = ['Пят', 'Суб', 'Вос', 'Пон', 'Вто', 'Сре', 'Чет'];
+            var startHour = parseInt(startTime.split(':')[0], 10);
+            var startMinute = parseInt(startTime.split(':')[1], 10);
+            var endHour = parseInt(endTime.split(':')[0], 10);
+            var endMinute = parseInt(endTime.split(':')[1], 10);
+
+            daysOfWeek.forEach((day, index) => {
+                if (workingDays.includes(day)) {
+                    var current = new Date();
+                    current.setHours(startHour, startMinute, 0);
+                    var end = new Date();
+                    end.setHours(endHour, endMinute, 0);
+
+                    while (current <= end) {
+                       var time = current.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+                        slots[index].push(time);
+                        current = new Date(current.getTime() + slotDuration * 60000);
+                    }
+                }
+            });
+            return slots;
+        }
+    });
+})(jQuery);
+    </script>               
+                    <button class="button-change-on-hover-submit">Подтвердить запись</button>
+                </div>
+            {% else %}
+                <p>Вы не прикреплены к врачу.</p>
+            {% endif %}
+    <div id="typing" style="text-align: center; position: relative; margin-right: auto; margin-left: auto;"></div>
+        </div>
+    <script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+function bookAppointment() {
+    var selectedDate = document.getElementById('selected-date').textContent;
+    var selectedTime = document.getElementById('selected-time').textContent;
+    var doctorIin = "{{ attached_doctor.iin }}";  // Assuming attached_doctor is available in the template context
+    var clinicId = "{{ attached_clinic.ext_id }}"; // Same assumption as above
+
+    fetch('/create_appointment/', { 
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken // Make sure csrftoken is the correct value
+    },
+        body: JSON.stringify({
+            date: selectedDate,
+            time: selectedTime,
+            doctor_iin: doctorIin,
+            clinic_id: clinicId
+        })
+    })
+    // ... the rest of your fetch code
+}
+
+// Attach the bookAppointment function to your button
+document.querySelector('.button-change-on-hover-submit').addEventListener('click', bookAppointment);
+
+    </script>
+        <script>
+            const text = `Уважаемый пациент, мы просим Вас явиться на прием к врачу без опозданий. Время Вашего визита тщательно запланировано, чтобы обеспечить наилучшее обслуживание без спешки и дополнительного ожидания.\nПожалуйста, уточните номер кабинета врача в регистратуре при вашем прибытии.`;
+            const typingContainer = document.getElementById('typing');
+            let index = 0;
+
+            function type() {
+                if (index < text.length) {
+                    typingContainer.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(type, 10); // Интервал между напечатанными символами
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', type);
+        </script>
+    <!-- HTML -->
+    <!-- Модальное окно для выбора врача -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <i id="close-modal" class="far fa-window-close" onclick="closeModal()"></i>
+            <form id="doctor-selection-form" onsubmit="submitDoctorSelection(event)">
+                <h3>Выберите врача:</h3>
+                {% csrf_token %}
+                <select id="doctor" name="doctor"
+                        style="width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; background-color: #192836;  color: #fff; cursor: pointer; ">
+                    {% for doctor in doctors %}
+                        <option value="{{ doctor.iin }}">{{ doctor.full_name }} - {{ doctor.position }}</option>
+                    {% endfor %}
+                </select>
+                <p style="border: 1px solid #0b520e; padding: 15px; text-align: center;">Уважаемый пациент, пожалуйста,
+                    выберите врача из списка доступных специалистов в вашей клинике. Это позволит вам записаться на
+                    прием к специалисту, который лучше всего соответствует вашим медицинским потребностям. Если у вас
+                    есть предпочтения или особые требования к квалификации врача, учитывайте это при выборе. Мы
+                    стремимся предоставить вам наилучшее обслуживание и поддержку.</p>
+                <button type="submit" class="button-change-on-hover">Подтвердить выбор</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        function redirectToHome() {
+            window.location.href = '/'; // Adjust as necessary
+        }
+
+        // Функция для открытия модального окна
+        function openModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        // Функция для закрытия модального окна
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            var modal = document.getElementById("myModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function submitDoctorSelection(event) {
+            event.preventDefault();
+            var form = document.getElementById('doctor-selection-form');
+            var formData = new FormData(form);
+
+            fetch('{% url 'update_doctor' %}', { // Django URL Tag
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        closeModal();
+                        updateDoctorInfoOnPage(data.doctor);
+                    } else {
+                        console.error('Ошибка при обновлении врача');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при отправке запроса:', error);
+                });
+        }
+
+        function updateDoctorInfoOnPage(doctor) {
+            // Обновите DOM в соответствии с вашими элементами
+            var doctorInfoContainer = document.getElementById('doctor-info');
+            doctorInfoContainer.querySelector('h3').textContent = 'Ваш врач: ' + doctor.full_name;
+            doctorInfoContainer.querySelector('#doctor-specialization').textContent = 'Специализация: ' + doctor.position;
+            doctorInfoContainer.querySelector('#doctor-email').textContent = 'Email: ' + doctor.email;
+            doctorInfoContainer.querySelector('#doctor-phone').textContent = 'Телефон: ' + doctor.phone_number;
+            var doctorImage = doctorInfoContainer.querySelector('#doctor-image');
+    doctorImage.src = doctor.image_url || '';
+    
+        }
+    </script>
+
+{% endblock %}

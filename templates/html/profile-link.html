@@ -1,0 +1,621 @@
+
+{% extends "html/index.html" %}
+{% block extra_styles %}
+        #user-info {
+            background: rgba(19, 35, 47, 0.9);
+            padding: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 25px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        #user-info td input {
+            font-size: 22px;
+            display: block;
+            width: 100%;
+            padding: 6px 10px;
+            background: none;
+            background-image: none;
+            border: 1px solid #a0b3b0;
+            color: #fff;
+            border-radius: 0;
+            margin: 10px auto;
+        }
+
+        #user-info td button {
+            margin: 15px auto;
+        }
+
+        #user-info i {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 30px;
+            font-weight: bolder;
+        }
+
+    #user-info i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+
+        #user-info button, #user-info a {
+            background-color: #4CAF50; /* Зеленый */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        #user-info button:hover, #user-info a:hover {
+            background-color: #0b520e;
+        }
+
+
+        #resetPasswordForm {
+            background: rgba(19, 35, 47, 0.9);
+            padding: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 25px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        #resetPasswordForm input {
+            font-size: 22px;
+            display: block;
+            width: calc(100% - 50px);
+            padding: 5px 10px;
+            background: none;
+            border: 1px solid #a0b3b0;
+            color: #fff;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            margin: 15px auto;
+            position: relative;
+        }
+
+        #resetPasswordForm button {
+            background-color: #4CAF50; /* Зеленый */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 10px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+            white-space: nowrap;
+            width: calc(100% - 20px);
+        }
+
+        #resetPasswordForm button:hover {
+            background-color: #0b520e; /* Темнее зеленый при наведении */
+        }
+
+        #user-info .button-container, #resetPasswordForm .button-container {
+            display: flex;
+            justify-content: center; /* Равномерно распределяет пространство между элементами */
+            align-items: center; /* Выравнивает элементы по центру */
+        }
+
+        #user-info .button-container button, #resetPasswordForm .button-container button,
+        #user-info .button-container a {
+            right: 10px; /* Добавляем отступ справа для всех кнопок, кроме последней */
+        }
+    
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px #4CAF50;
+            }
+        }
+
+        h1 {
+            font-size: 1.5rem; /* Уменьшаем размер шрифта */
+        }
+
+        .message {
+            color: #fff; /* Цвет текста */
+            padding: 1px; /* Внутренний отступ */
+            margin: 1px 0; /* Внешние отступы */
+            font-size: 16px; /* Размер шрифта */
+            text-align: center; /* Выравнивание текста по центру */
+            font-style: oblique;
+        }
+
+        #userDistrict {
+            background: rgba(19, 35, 47, 0.9);
+            color: white;
+            padding: 5px 10px;
+            font-size: 22px;
+            width: 100%;
+            margin: 15px auto;
+            border-radius: 4px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        #userDistrict:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(9, 72, 13, 0.6);
+        }
+
+        #userDistrict option:hover {
+            background-color: #063f08;
+            color: white;
+        }
+
+        .custom-divider {
+            width: 100%;
+            border: none;
+            height: 1px; /* или другая толщина линии, которая вам нужна */
+            background-color: #ffffff; /* цвет линии */
+            margin-top: 20px;
+            margin-bottom: 3px;
+        }
+
+        input[type="date"] {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            color: #444;
+            background-color: #f8f8f8;
+        }
+
+#profilePicContainer {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;  
+    margin-right: auto;
+}
+.initials {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px; /* Adjust as needed */
+    background-color: #ccc; /* Your chosen color */
+    color: white;
+    overflow: hidden;
+}
+.upload-profile-pic {
+    width: 30%; /* Width of the button */
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 1px;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;  
+    margin-right: auto; 
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.upload-profile-pic:hover {
+    background-color: #0b520e;
+}
+{% endblock %}
+{% block title %}Личный кабинет{% endblock %}
+
+  
+{% block content %}
+<div id="user-info">
+<div id="profilePicContainer" style="display: flex; justify-content: center; align-items: center;">
+    {% if user.details.profile_pic %}
+        <img src="{{ user.details.profile_pic.url }}" id="profilePic" width="180" height="180" alt="Profile Picture" />
+    {% else %}
+        <div id="initialsContainer" class="initials">{{ user.details.get_initials }}</div>
+    {% endif %}
+</div>
+<label for="profilePicUpload" id="uploadBtn" class="upload-profile-pic">Добавить фото профиля</label>
+<input type="file" id="profilePicUpload" name="profile_pic" style="display: none;" />
+
+        <div id="messageContainer" class="message"></div>
+<i id="user-info-icon" class="far fa-window-close" onclick="redirectToHome()"></i>
+    <table>
+        <tr>
+            <td>ФИО:</td>
+            <td><input type="text" id="userFullName" value="{{ user.first_name }} {{ user.last_name }}" disabled /></td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td><input type="email" id="userEmail" value="{{ user.email }}" disabled /></td>
+        </tr>
+        <tr>
+            <td>ИИН:</td>
+            <td><input type="text" id="userIIN" value="{{ user.iin }}" disabled /></td>
+        </tr>
+        <tr>
+            <td>Пароль: </td>
+            <td><button  id="resetPasswordButton">Сбросить пароль</button></td>
+        </tr>
+        </table>
+    <hr class="custom-divider" />
+    <table>
+        <tr>
+            <td>Номер телефона:</td>
+            <td><input type="text" id="userPhone" value="{{ user.details.phone_number }}" disabled/></td>
+        </tr>
+        <tr>
+            <td>Район:</td>
+            <td>
+                <select id="userDistrict" disabled>
+    <option value="">Выберите район</option>
+    <option value="Алатауский район" {% if user.details.district == "Алатауский район" %}selected{% endif %}>Алатауский район</option>
+    <option value="Алмалинский район" {% if user.details.district == "Алмалинский район" %}selected{% endif %}>Алмалинский район</option>
+    <option value="Ауэзовский район" {% if user.details.district == "Ауэзовский район" %}selected{% endif %}>Ауэзовский район</option>
+    <option value="Бостандыкский район" {% if user.details.district == "Бостандыкский район" %}selected{% endif %}>Бостандыкский район</option>
+    <option value="Жетысуский район" {% if user.details.district == "Жетысуский район" %}selected{% endif %}>Жетысуский район</option>
+    <option value="Медеуский район" {% if user.details.district == "Медеуский район" %}selected{% endif %}>Медеуский район</option>
+    <option value="Наурызбайский район" {% if user.details.district == "Наурызбайский район" %}selected{% endif %}>Наурызбайский район</option>
+    <option value="Турксибский район" {% if user.details.district == "Турксибский район" %}selected{% endif %}>Турксибский район</option>
+</select>
+            </td>
+        </tr>
+        <tr>
+            <td>Адрес:</td>
+            <td><input type="text" id="userAddress" value="{{ user.details.address }}" disabled/></td>
+        </tr>
+        <tr>
+            <td>Дата рождения:</td>
+            <td><input type="date" id="userBirthDate" name="birth_date" value="{{ user.details.birth_date|date:'Y-m-d'  }}" required></td>
+        </tr>
+    </table>
+    <hr class="custom-divider" />
+    <div class="button-container">
+    <button id="editUserInfo">Редактировать</button>
+    <button id="saveUserInfo" style="display: none;">Сохранить</button>
+    </div>
+</div>
+
+<!-- Форма сброса пароля -->
+<!-- Форма сброса пароля -->
+<div id="resetPasswordForm" style="display: none;">
+    <div class="input-group">
+        <input type="text" id="resetEmail" value="{{ user.email }}" readonly />
+        <button id="requestCode">Получить код</button>
+    </div>
+    <div id="codeMessage" class="message"></div>
+    <input type="text" id="resetCode" placeholder="Введите код" disabled />
+    <input type="password" id="newPassword" placeholder="Новый пароль" disabled />
+    <input type="password" id="confirmNewPassword" placeholder="Подтвердите новый пароль" disabled />
+    <div class="button-container">
+        <button id="submitReset" disabled>Сбросить пароль</button>
+        <button id="cancelReset">Отмена</button>
+    </div>
+    <div id="passwordMessage" class="message"></div>
+</div>
+{% endblock content %}
+{% block scripts %}
+    <script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var profilePicInput = document.getElementById('profilePicUpload');
+
+    profilePicInput.addEventListener('change', function (event) {
+        // Check if any files were selected
+        if (event.target.files.length > 0) {
+            var formData = new FormData();
+            formData.append('profile_pic', event.target.files[0]);
+            
+            // Include the CSRF token in the request
+            var csrftoken = getCookie('csrftoken'); // Function to get cookie needs to be defined
+
+            // Make the AJAX request
+            fetch('/handle_image_upload/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                body: formData,
+                credentials: 'include' // Эта строка важна для передачи cookies
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Log the response for debugging
+                    console.log('Response from the server:', data);
+
+                    // Check if the server indicates success
+                    if (data.status === 'success') {
+                        var profilePic = document.getElementById('profilePic');
+                        var newSrc = data.profile_pic_url;
+
+                        // Update or create the image element
+                        if (profilePic) {
+                            profilePic.src = newSrc + '?t=' + new Date().getTime(); // Adding a timestamp to bypass cache
+                        } else {
+                            var img = new Image(180, 180); // Creating a new image element
+                            img.id = 'profilePic';
+                            img.src = newSrc + '?t=' + new Date().getTime(); // Adding a timestamp to bypass cache
+                            img.alt = 'Profile Picture';
+                            document.getElementById('profilePicContainer').appendChild(img);
+                        }
+                    } else {
+                        // Handle the case where the server did not return a success status
+                        console.error('Failed to upload the profile picture:', data.message);
+                    }
+                })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var editButton = document.getElementById('editUserInfo');
+    var saveButton = document.getElementById('saveUserInfo');
+    var messageContainer = document.getElementById('messageContainer'); // Убедитесь, что есть элемент с id="messageContainer"
+
+    editButton.addEventListener('click', function() {
+        // Включить редактирование полей формы
+        document.getElementById('userFullName').disabled = false;
+        document.getElementById('userEmail').disabled = false;
+        document.getElementById('userIIN').disabled = false;
+        document.getElementById('userPhone').disabled = false;
+        document.getElementById('userDistrict').disabled = false;
+        document.getElementById('userAddress').disabled = false;
+        document.getElementById('userBirthDate').disabled = false;
+        
+        editButton.style.display = 'none';
+        saveButton.style.display = 'block';
+    });
+document.getElementById('resetPasswordButton').addEventListener('click', function() {
+    document.getElementById('user-info').style.display = 'none';  // Скрываем форму профиля пользователя
+    document.getElementById('resetPasswordForm').style.display = 'block';  // Показываем форму сброса пароля
+});
+    
+
+saveButton.addEventListener('click', function() {
+    // Собрать данные формы
+    var fullName = document.getElementById('userFullName').value.trim().split(' ');
+    var first_name = fullName[0];
+    var last_name = fullName.slice(1).join(' '); // Обрабатываем фамилии с пробелами
+    var email = document.getElementById('userEmail').value;
+    var iin = document.getElementById('userIIN').value;
+    var phone_number = document.getElementById('userPhone').value;
+    var district = document.getElementById('userDistrict').value;
+    var address = document.getElementById('userAddress').value;
+    var birth_date = document.getElementById('userBirthDate').value; 
+    console.log(birth_date);
+        // Выполнить AJAX-запрос для сохранения информации
+        fetch('/save_user_info/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ first_name, last_name, email, iin, phone_number, district, address, birth_date }),
+        credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Обновить отображаемые данные пользователя
+                document.querySelector('.user-name').textContent = `${first_name} ${last_name}: ${iin}`;
+                
+                // Отключить редактирование полей формы
+                document.getElementById('userFullName').disabled = true;
+                document.getElementById('userEmail').disabled = true;
+                document.getElementById('userIIN').disabled = true;
+
+                // Переключить видимость кнопок
+                saveButton.style.display = 'none';
+                editButton.style.display = 'block';
+
+                // Отобразить сообщение об успехе
+                messageContainer.textContent = data.message;
+                messageContainer.style.display = 'block';
+            } else {
+                // Отобразить сообщение об ошибке
+                messageContainer.textContent = data.message;
+                messageContainer.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            // Вывести ошибку и отобразить сообщение об ошибке
+            console.error('Error:', error);
+            messageContainer.textContent = 'Произошла ошибка при сохранении данных.';
+            messageContainer.style.display = 'block';
+        });
+    });
+});
+</script>
+
+<script>
+function redirectToHome() {
+    window.location.href = '/'; // Путь к вашей главной странице
+}
+
+// Функция для отображения сообщений пользователю
+function displayMessage(elementId, message, isSuccess) {
+    var messageElement = document.getElementById(elementId);
+    messageElement.textContent = message;
+    messageElement.style.color = isSuccess ? 'white' : 'white';
+    messageElement.style.display = 'block';
+}
+
+// Функция для разблокировки полей ввода пароля
+function enablePasswordFields(enable) {
+    document.getElementById('newPassword').disabled = !enable;
+    document.getElementById('confirmNewPassword').disabled = !enable;
+    document.getElementById('submitReset').disabled = !enable;
+}
+
+// Функция для получения CSRF токена из cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Обработчик события клика на кнопку "Получить код"
+document.getElementById('requestCode').addEventListener('click', function(event) {
+    event.preventDefault();
+    var userEmail = document.getElementById('userEmail').value;
+
+    fetch('/send_reset_code/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ email: userEmail }),
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        displayMessage('codeMessage', data.message, data.status === 'success');
+        if (data.status === 'success') {
+            document.getElementById('resetCode').disabled = false;
+        }
+    })
+    .catch(error => {
+        displayMessage('codeMessage', 'Ошибка при запросе кода: ' + error, false);
+    });
+});
+
+// Обработчик события ввода в поле "Код" для разблокировки полей нового пароля
+document.getElementById('resetCode').addEventListener('input', function() {
+    if (this.value.length === 5) {
+        enablePasswordFields(true);
+    }
+});
+
+// Обработчик события клика на кнопку "Сбросить пароль"
+document.getElementById('submitReset').addEventListener('click', function(event) {
+    event.preventDefault();
+    var userEmail = document.getElementById('userEmail').value;
+    var code = document.getElementById('resetCode').value;
+    var newPassword = document.getElementById('newPassword').value;
+    var confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+    if (newPassword !== confirmNewPassword) {
+        displayMessage('passwordMessage', 'Пароли не совпадают!', false);
+        return;
+    }
+
+    fetch('/reset_password/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            email: userEmail,
+            code: code,
+            new_password: newPassword
+        }),
+        credentials: 'include'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Отобразим анимацию успеха
+                const resetForm = document.getElementById('resetPasswordForm');
+                resetForm.innerHTML = `
+            <div class="success-animation" style="text-align: center; margin-top: 20%;">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+                <h1>Пароль успешно сброшен. Пожалуйста, войдите с новым паролем!</h1>
+            </div>
+        `;
+                // Перенаправим пользователя на страницу входа через некоторое время
+                setTimeout(() => {
+                    window.location.href = '/login-signup/?tab=login'; // Замените URL, если нужно
+                }, 3000); // 3 секунды для отображения анимации
+            } else {
+                // Отобразить сообщение об ошибке, если статус не 'success'
+                displayMessage('passwordMessage', data.message, false);
+            }
+        })
+});
+
+// Обработчик события клика на кнопку "Отмена"
+document.getElementById('cancelReset').addEventListener('click', function() {
+    document.getElementById('resetPasswordForm').style.display = 'none';
+    document.getElementById('user-info').style.display = 'block';
+    document.getElementById('resetCode').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmNewPassword').value = '';
+    displayMessage('codeMessage', '', false);
+    displayMessage('passwordMessage', '', false);
+    enablePasswordFields(false);
+});
+</script>
+{% endblock scripts %}

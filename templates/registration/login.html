@@ -9,7 +9,9 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    height: 100vh; 
+    margin: 0; /* Убедитесь, что отступов нет, если они не нужны */
+    min-height: 100vh; /* Минимальная высота равна высоте видимой части экрана */
+    min-width: 100vw;
 }
 
 .form {
@@ -300,11 +302,123 @@ h1 {
     font-size: 1.5rem; /* Уменьшаем размер шрифта */
 }
 
+.message {
+    color: #fff; /* Цвет текста */
+    padding: 1px; /* Внутренний отступ */
+    margin: 1px 0; /* Внешние отступы */
+    font-size: 16px; /* Размер шрифта */
+    text-align: center; /* Выравнивание текста по центру */
+    font-style:oblique;
+}
+
+#resetPasswordForm{
+    background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    max-width: 800px;
+    margin: 40px auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+    font-size: 25px;
+    color: white;
+    position: relative;
+}
+#resetPasswordForm input {
+    font-size: 22px;
+    display: block;
+    width: calc(100% - 50px);
+    padding: 5px 10px;
+    background: none;
+    border: 1px solid #a0b3b0;
+    color: #fff;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    margin: 15px auto;
+    position: relative;
+}
+
+    #resetPasswordForm button {
+        background: rgba(160, 179, 176, 0.25);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 10px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+        white-space: nowrap;
+        width: calc(100% - 20px);
+    }
+    #resetPasswordForm button:hover {
+        background: #1ab188; /* Темнее зеленый при наведении */
+    }
+    #FaceIDForm {
+        background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    max-width: 800px;
+    margin: 40px auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+    font-size: 25px;
+    color: white;
+        text-align: center;
+    }
+    #FaceIDForm button {
+        background: rgba(160, 179, 176, 0.25);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 10px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+        white-space: nowrap;
+        width: calc(100% - 20px);
+    }
+    #FaceIDForm button:hover {
+        background: #1ab188; /* Темнее зеленый при наведении */
+    }
+    .not-visible {
+    display: none;
+}
+    
+    #faceIdCapture button {
+        background: rgba(160, 179, 176, 0.25);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        cursor: pointer;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 0;
+        transition: background 0.3s;
+        white-space: nowrap;
+        width: 100%;
+    }
+    #faceIdCapture button:hover {
+        background: #1ab188; /* Темнее зеленый при наведении */
+    }
+    #faceIdCapture video {
+        width: 100%;
+    }
+    #faceIdCapture canvas {
+        width: 100%;
+    }
     </style>
 </head>
 <body>
 <!-- HTML код для формы -->
-<div class="form">
+<div id="login-signup" class="form">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <button id="back-button" class="button arrow-6" onclick="window.location.href = '/';" style="text-transform: none;">
     <i>
@@ -329,7 +443,7 @@ h1 {
 
 
     <div id="signup" class="tab-content">
-    <form id="signup-form" action="{% url 'login-signup' %}" method="post">
+    <form id="signup-form" action="{% url 'login-signup' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="top-row">
             <div class="field-wrap">
@@ -353,6 +467,22 @@ h1 {
             <label for="signup-password">Введите пароль<span class="req">*</span></label>
             <input type="password" id="signup-password" name="password" required autocomplete="off"/>
         </div>
+        <p class="forgot" id="FaceIDSign" style="display:block;"><a href="#" id="FaceIDSignup">Добавить лицо для распознавания</a></p>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+    <div id="faceIdCapture" style="display:none;">
+    <h2 style="text-align: center; color: #13a178">Добавьте ваше лицо для распознавания</h2>
+    <video id="videoElement" autoplay></video>
+        <canvas id="canvasElement" style="display:none;"></canvas>
+        <input type="hidden" id="capturedImage" name="capturedImage" />
+    <button type="button" id="captureButton">Захватить изображение</button>
+    <button id="cancelFaceId">Отмена</button>
+    <canvas id="canvasElement" style="display:none;"></canvas>
+</div>
+
         <button type="submit" name="action" value="register" class="button button-block">Начать</button>
     </form>
 </div>
@@ -370,34 +500,250 @@ h1 {
                 <label for="login-password">Пароль<span class="req">*</span></label>
                 <input type="password" id="login-password" name="password" required autocomplete="off"/>
             </div>
-            <p class="forgot"><a href="#">Забыли пароль?</a></p>
+            <div class="field-wrap">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <p class="forgot"><a href="#" id="FaceID">Войти по face id</a><a href="#" id="forgotPasswordLink" style="margin-left: 25px;">Забыли пароль?</a></p>
             <button type="submit" name="action" value="login" class="button button-block">Войти</button>
         </form>
     </div>
-    {% if messages %}
 <div id="message-container">
-    {% for message in messages %}
-    <div class="{{ message.tags }}">{{ message }}</div>
-    {% if message.tags == 'success' %}
-    <script>
-        let messageText = "{{ message }}";
-        if (messageText.includes("Registration successful")) {
-            setTimeout(function () {
-                document.querySelector('.form').innerHTML = `
-                <div class="success-animation" style="text-align: center; margin-top: 20%;">
-                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-                        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-                    </svg>
-                    <h1>Вы успешно зарегистрировались. Пожалуйста, войдите в систему!</h1>
-                </div>`;
+{% for message in messages %}
+    {% if 'success' in message.tags %}
+        <script>
+            let messageText = "{{ message }}";
+            if (messageText.includes("Registration successful")) {
                 setTimeout(function () {
-                    window.location.href = "{% url 'login-signup' %}?tab=login";
-                }, 2000);
-            }, 0);
-        } else if (messageText.includes("Вход успешно выполнен")) {
-            setTimeout(function () {
-                document.querySelector('.form').innerHTML = `
+                    document.querySelector('#signup-form').innerHTML = `
+                    <div class="success-animation" style="text-align: center; margin-top: 20%;">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                        <h1>Вы успешно зарегистрировались. Пожалуйста, войдите в систему!</h1>
+                    </div>`;
+                    setTimeout(function () {
+                        window.location.href = "{% url 'login-signup' %}?tab=login";
+                    }, 2000);
+                }, 0);
+            } else if (messageText.includes("Вход успешно выполнен")) {
+                setTimeout(function () {
+                    document.querySelector('.form').innerHTML = `
+                    <div class="success-animation" style="text-align: center; margin-top: 20%;">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                        <h1>Вы успешно вошли в систему!</h1>
+                    </div>`;
+                    setTimeout(function () {
+                        window.location.href = "{% url 'home' %}";
+                    }, 2000);
+                }, 0);
+            }
+        </script>
+    {% endif %}
+{% endfor %}
+</div>
+</div>
+{% csrf_token %}
+<div id="resetPasswordForm" style="display: none;">
+    <h1>Сброс пароля</h1>
+    <div class="input-group">
+        <input type="text" id="resetIIN" placeholder="Введите ваш ИИН" />
+        <div id="codeMessage" class="message"></div>
+        <button id="requestCode">Получить код</button>
+    </div>
+    <input type="text" id="resetCode" placeholder="Введите код" disabled />
+    <input type="password" id="newPassword" placeholder="Новый пароль" disabled />
+    <input type="password" id="confirmNewPassword" placeholder="Подтвердите новый пароль" disabled />
+    <div id="passwordMessage" class="message"></div>
+    <div class="button-container">
+        <button id="submitReset" disabled>Сбросить пароль</button>
+        <button id="cancelReset">Отмена</button>
+    </div>
+</div>
+
+<div id="FaceIDForm" style="display: none;">
+    <h1>Вход с помощью FaceID</h1>
+    {% csrf_token %}
+    <div class="text-center">
+        <video autoplay="autoplay" id="video-element"></video>
+    </div>
+    <div id="img-element"></div>
+    <div id="error-message" style="color: #cdcdcd; display: none; font-size: 17px;"></div>
+    <div class="text-center mt-3">
+        <button class="btn btn-primary" id="capture-btn">Загрузить изображение</button>
+        <button class="btn btn-info" id="cancel-btn">Отмена</button>
+    </div> 
+</div>
+<script>
+function startVideo() {
+    const videoElement = document.getElementById('videoElement');
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        videoElement.srcObject = stream;
+        videoElement.play();
+        document.getElementById('faceIdCapture').style.display = 'block';
+        document.getElementById('FaceIDSign').style.display = 'none';
+    })
+    .catch(function(error) {
+        console.error("Access to camera was denied", error);
+    });
+}
+
+// Start video when "Добавить лицо для распознавания" is clicked
+document.getElementById('FaceIDSignup').addEventListener('click', function() {
+    startVideo();
+});
+
+document.getElementById('captureButton').addEventListener('click', function(event) {
+    event.preventDefault();
+    const video = document.getElementById('videoElement');
+    const canvas = document.getElementById('canvasElement');
+    const captureButton = document.getElementById('captureButton');
+
+    if (video.srcObject && captureButton.textContent === 'Захватить изображение') {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+        video.srcObject.getTracks().forEach(track => track.stop());
+        video.style.display = 'none';
+        canvas.style.display = 'block';
+        captureButton.textContent = 'Переснять изображение';
+
+        
+        const imageDataURL = canvas.toDataURL('image/png');
+document.getElementById('capturedImage').value = imageDataURL;
+        console.log('Captured image Data URL:', imageDataURL);
+    } else if (captureButton.textContent === 'Переснять изображение') {
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            video.srcObject = stream;
+            video.style.display = 'block';
+            canvas.style.display = 'none';
+            captureButton.textContent = 'Захватить изображение';
+        })
+        .catch(function(error) {
+            console.error("Access to camera was denied", error);
+        });
+    }
+});
+
+
+document.getElementById('cancelFaceId').addEventListener('click', function() {
+    const videoElement = document.getElementById('videoElement');
+    if(videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
+    }
+    document.getElementById('faceIdCapture').style.display = 'none';
+    document.getElementById('FaceIDSign').style.display = 'block';
+    document.getElementById('captureButton').textContent = 'Захватить изображение';
+    videoElement.style.display = 'block'; // Ensure video is set to display
+    document.getElementById('canvasElement').style.display = 'none'; // Hide canvas if shown
+});
+
+</script>
+<script>
+    document.getElementById('forgotPasswordLink').addEventListener('click', function (event) {
+        event.preventDefault();
+        document.getElementById('login-signup').style.display = 'none';
+        document.getElementById('resetPasswordForm').style.display = 'block';
+    });
+
+    
+    document.getElementById('FaceID').addEventListener('click', function (event) {
+        event.preventDefault();
+        document.getElementById('login-signup').style.display = 'none';
+        document.getElementById('resetPasswordForm').style.display = 'none';
+        document.getElementById('FaceIDForm').style.display = 'block';
+
+        const getCookie = (name) => {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        const video = document.getElementById('video-element')
+        const image = document.getElementById('img-element')
+        const captureBtn = document.getElementById('capture-btn')
+        const cancelBtn = document.getElementById('cancel-btn')
+
+        cancelBtn.addEventListener('click', () => {
+            window.location.reload()
+        })
+        
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({video: true})
+                .then((stream) => {
+                    video.srcObject = stream
+                    const {height, width} = stream.getTracks()[0].getSettings()
+
+                    captureBtn.addEventListener('click', e => {
+                        e.preventDefault();
+                        captureBtn.classList.add('not-visible');
+                        const track = stream.getVideoTracks()[0];
+                        const imageCapture = new ImageCapture(track);
+                        console.log(imageCapture)
+
+                        imageCapture.takePhoto().then(blob => {
+                            // Очистка img-element и добавление нового изображения
+                            image.innerHTML = '';
+                            const img = new Image(width, height);
+                            img.src = URL.createObjectURL(blob);
+                            image.appendChild(img);
+                            console.log("took photo:", blob)
+                            // Скрываем элементы и показываем изображение
+                            video.classList.add('not-visible');
+                            image.style.display = 'block';
+
+                            // Установка таймаута для удаления изображения и показа видеопотока
+                            setTimeout(() => {
+                                image.innerHTML = ''; // Удаление изображения
+                                captureBtn.classList.remove('not-visible'); // Показ кнопки снова
+                                video.classList.remove('not-visible'); // Показ видео снова
+                                image.style.display = 'none'; // Скрытие блока с изображением
+                            }, 2000);
+
+
+                            const reader = new FileReader()
+
+                            reader.readAsDataURL(blob)
+                            reader.onloadend = () => {
+                                const base64data = reader.result;
+                                const fd = new FormData();
+                                fd.append('csrfmiddlewaretoken', csrftoken);
+                                fd.append('photo', base64data);
+                                fetch('/find_user_view/', {
+                                    method: 'POST',
+                                    body: fd,
+                                })
+                                    .then(response => {
+                                        if (!response.ok) throw response;
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        if (data.success) {
+                                            // Обработка успешного входа
+                                            setTimeout(function () {
+                                                document.querySelector('#FaceIDForm').innerHTML = `
                 <div class="success-animation" style="text-align: center; margin-top: 20%;">
                     <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                         <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
@@ -405,17 +751,135 @@ h1 {
                     </svg>
                     <h1>Вы успешно вошли в систему!</h1>
                 </div>`;
-                setTimeout(function () {
-                    window.location.href = "{% url 'home' %}";
-                }, 2000);
-            }, 0);
+                                                setTimeout(function () {
+                                                    window.location.href = "/";
+                                                }, 2000);
+                                            }, 0);
+                                        } else {
+                                            // Вывод ошибки пользователю
+                                            document.getElementById('error-message').style.display = 'block';
+                                            document.getElementById('error-message').textContent = data.error || 'Face recognition failed or user not found.';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        error.json().then(errorMessage => {
+                                            // Вывод ошибки пользователю
+                                            document.getElementById('error-message').style.display = 'block';
+                                            document.getElementById('error-message').textContent = errorMessage.error || 'Network or server error.';
+                                        });
+                                    });
+                            };
+                        })
+                    });
+                })
         }
-    </script>
-    {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
-</div>
+    });
+</script>
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.getElementById('requestCode').addEventListener('click', function(event) {
+    event.preventDefault();
+    const iin = document.getElementById('resetIIN').value;
+
+    fetch('/send_reset_code_login/', {  // Убедитесь, что этот URL соответствует настройкам в urls.py
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),  // Добавление токена CSRF
+        },
+        body: JSON.stringify({ iin: iin })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+    document.getElementById('codeMessage').textContent = data.message + ' Email: ' + atob(data.encoded_email);
+        if (data.status === 'success') {
+            document.getElementById('resetCode').disabled = false;
+            document.getElementById('newPassword').disabled = false;
+            document.getElementById('confirmNewPassword').disabled = false;
+            document.getElementById('submitReset').disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+});
+    document.getElementById('submitReset').addEventListener('click', function(event) {
+    event.preventDefault();
+    const iin = document.getElementById('resetIIN').value;
+    const code = document.getElementById('resetCode').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+    // Проверка совпадения нового пароля и его подтверждения
+    if (newPassword !== confirmNewPassword) {
+        document.getElementById('passwordMessage').textContent = 'Пароли не совпадают.';
+        return;
+    }
+
+    // Отправляем запрос на сброс пароля
+    fetch('/reset_password_login/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),  // Добавление токена CSRF
+        },
+        body: JSON.stringify({
+            iin: iin,
+            code: code,
+            new_password: newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('passwordMessage').textContent = data.message;
+        if (data.status === 'success') {
+            // Пароль успешно сброшен, отобразим анимацию успеха
+            document.querySelector('#resetPasswordForm').innerHTML = `
+                <div class="success-animation" style="text-align: center; margin-top: 20%;">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                    <h1>Пароль успешно сброшен, выполните вход!</h1>
+                </div>
+            `;
+            // Перенаправление на страницу входа
+            setTimeout(function() {
+                window.location.href = "{% url 'login-signup' %}?tab=login";
+            }, 2000);  // Переход после 2 секунд
+        }
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+});
+    document.getElementById('cancelReset').addEventListener('click', function(event) {
+    event.preventDefault();
+    // Здесь можно просто скрыть форму сброса пароля и показать форму входа, если они находятся на одной странице
+    document.getElementById('resetPasswordForm').style.display = 'none';
+    document.getElementById('login-signup').style.display = 'block'; // Убедитесь, что у вашей формы входа правильно указан id
+});
+
+</script>
 
 
 <!-- JavaScript код для формы -->

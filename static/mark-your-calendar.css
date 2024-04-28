@@ -1,0 +1,146 @@
+
+#myc-container {
+    width: inherit;
+    border: 2px solid #033506;
+    padding: 10px;
+}
+
+#myc-nav-container {
+    margin-bottom: 15px;
+    width: inherit;
+}
+
+#myc-current-month-year-container {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: lighter;
+    text-align: center;
+    text-transform: capitalize;
+    vertical-align: top;
+    width: 68%;
+}
+
+#myc-prev-week-container {
+    display: inline-block;
+    width: 15%;
+}
+
+#myc-next-week-container {
+    display: inline-block;
+    width: 15%;
+}
+
+#myc-prev-week {
+    border: 1px solid #e0e0e0;
+    border-radius: 80px;
+    color: #e0e0e0;
+    cursor: pointer;
+    float: left;
+    font-size: 1.6em;
+    font-weight: lighter;
+    height: 40px;
+    text-align: center;
+    width: 40px;
+}
+
+#myc-next-week {
+    border: 1px solid #e0e0e0;
+    border-radius: 80px;
+    color: #e0e0e0;
+    cursor: pointer;
+    float: right;
+    font-size: 1.6em;
+    font-weight: lighter;
+    height: 40px;
+    text-align: center;
+    width: 40px;
+}
+
+#myc-prev-week:hover, #myc-next-week:hover {
+
+    color: #bdbdbd;
+}
+
+#myc-week-container {
+
+}
+
+#myc-dates-container {
+    background: rgba(19, 35, 47, 0.9);
+}
+
+.myc-date-header {
+    border-right: 1px solid #e0e0e0;
+    display: inline-block;
+    min-height: 50px;
+    padding: 15px 0px 15px 15px;
+    vertical-align: top;
+    width: 11%;
+}
+
+.myc-date-header:first-of-type {
+    padding-left: 15px;
+}
+
+.myc-date-header:last-of-type {
+    border-right: none;
+    width: 11%;
+}
+
+#myc-available-time-container {
+    border-top: 1px solid #e0e0e0;
+    min-height: 150px;
+}
+
+.myc-day-time-container {
+    /*border-right: 1px solid #e0e0e0;*/
+    display: inline-block;
+    height: 100%;
+    padding: 8px 8px 8px 8px;
+    vertical-align: top;
+    width: 11%;
+}
+
+.myc-day-time-container:first-of-type {
+    padding-left: 0;
+}
+
+.myc-day-time-container:last-of-type {
+    border-right: none;
+    width: 11%;
+}
+
+.myc-date-number {
+    font-size: 1.8em;
+    font-weight: lighter;
+}
+
+.myc-available-time {
+    background-color: #ffffff;
+    border-radius: 20px;
+    color: #0b520e;
+    font-size: 18px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px 0px 10px 0px;
+    text-align: center;
+
+}
+
+.myc-available-time.selected, .myc-available-time:hover {
+    background-color: #222;
+}
+
+.myc-date-display {
+    font-weight: lighter;
+}
+
+@media only screen and (max-width: 768px) {
+    .myc-date-header, .myc-day-time-container {
+        width: 11%;
+    }
+    /*.myc-date-header:last-of-type, .myc-day-time-container:last-of-type {
+        width: 12%;
+    }*/
+}

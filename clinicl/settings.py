@@ -25,9 +25,11 @@ SECRET_KEY = 'django-insecure-r-kw5sd!3f$x_%ezh1=kd_y5296vgq9quu3msd8ve9*%v!ny*4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-# Application definition
+
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'jquery',
+    'sslserver',
     'clinicApp',
 ]
 
@@ -77,8 +80,12 @@ WSGI_APPLICATION = 'clinicl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'qaz123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -100,8 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 AUTH_USER_MODEL = 'clinicApp.Patient'
+
 
 
 
@@ -122,6 +129,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/'media'
 LOGIN_REDIRECT_URL = 'home'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'esbolyegizekov@gmail.com'  # Замените на ваш реальный адрес Gmail
+EMAIL_HOST_PASSWORD = 'yjmt voth ofxw sycd'  # Пароль от вашего аккаунта Gmail
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -131,6 +144,6 @@ STATICFILES_DIRS = [
 ]
 
 CSRF_COOKIE_NAME = 'my_csrf_cookie'
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
 

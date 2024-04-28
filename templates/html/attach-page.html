@@ -1,0 +1,203 @@
+
+{% extends "html/index.html" %}
+{% block extra_styles %}
+        #attachment-form-container  {
+            background: rgba(19, 35, 47, 0.9);
+            padding: 10px;
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 25px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+#attachment-form-container i {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 30px;
+            font-weight: bolder;
+        }
+
+    #attachment-form-container i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+    #attachment-form-container label{
+    font-size: 17px;
+    }
+    .checkmark {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #4CAF50;
+  stroke-miterlimit: 10;
+  margin: 10% auto;
+  box-shadow: inset 0px 0px 0px #4CAF50;
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #4CAF50;
+  fill: #fff;
+  animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
+}
+    @keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #4CAF50;
+  }
+}
+h1 {
+    font-size: 1.5rem; /* Уменьшаем размер шрифта */
+}
+{% endblock %}
+{% block title %}Прикрепление к поликлинике{% endblock %}
+
+  
+{% block content %}
+<div id="attachment-form-container" class="form">
+    <h2 style="color: white; text-align: center; font-size: 30px;">Прикрепление к поликлинике</h2>
+<i id="user-info-icon" class="far fa-window-close" onclick="redirectToHome()"></i>
+    <form id="attachment-form" action="{% url 'attach-page' %}" method="post">
+        {% csrf_token %}
+
+<!-- Скрытый изначально select для организаций -->
+<div id="organization-select" style="display: block;">
+    <label for="organization">Выберите клинику:</label>
+    <select id="organization" name="organization" style="width: 100%; padding: 10px; background-color: #192836; color: #fff; cursor: pointer; margin-bottom: 20px; font-size: 20px">
+        {% for organization in organizations %}
+        <option value="{{ organization.ext_id }}">{{ organization.name }}:     {{ organization.address }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
+        <label for="doctor">Выберите врача:</label>
+        <select id="doctor" name="doctor" style="width: 100%; padding: 10px; margin-bottom: 20px; background-color: #192836;  color: #fff; cursor: pointer; ">
+            <!-- Заполните этот список значениями врачей -->
+            {% for doctor in doctors %}
+            <option value="{{ doctor.iin }}">{{ doctor.full_name }} - {{ doctor.position }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" style="width: 100%; background-color: #4CAF50; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer;">Прикрепиться</button>
+        <p style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center; margin-left: auto; margin-right: auto;"><img src="/media/hospital-animation.webp" class="img-logo" style="width: 100%; height: 100%;"></p>
+    </form>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+function redirectToHome() {
+    window.location.href = '/'; // Путь к вашей главной странице
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const organizationSelect = document.getElementById('organization');
+    const urlParams = new URLSearchParams(window.location.search);
+    const clinicExtId = urlParams.get('clinic_ext_id') || organizationSelect.value;
+    if (clinicExtId) {
+        fetchDoctors(clinicExtId);
+    }
+
+    organizationSelect.addEventListener('change', function() {
+        fetchDoctors(this.value);
+    });
+});
+
+function fetchDoctors(clinicExtId) {
+    const doctorsSelect = document.getElementById('doctor');
+    fetch(`/get-doctors/${clinicExtId}/`)
+        .then(response => response.json())
+        .then(doctors => {
+            doctorsSelect.innerHTML = '';
+            doctors.forEach(doctor => {
+                let option = new Option(`${doctor.full_name} - ${doctor.position}`, doctor.iin);
+                doctorsSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            doctorsSelect.innerHTML = '';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... your existing event listeners and functions ...
+
+    const attachForm = document.querySelector('#attachment-form'); // Ensure this selector matches your form ID
+    attachForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+        const actionUrl = this.action;
+
+        fetch(actionUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const formContainer = document.querySelector('.form'); // Make sure '.form' matches the class of your container
+                if(formContainer) { // Check if the element exists
+                    formContainer.innerHTML = `
+                        <div class="success-animation" style="text-align: center; margin-top: 0; margin-bottom: 0;">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                        <h1 style="font-size: 25px;">${data.message}</h1>
+                    </div>`;
+                    setTimeout(function() {
+                        window.location.href = "{% url 'appoint_doctor' %}"; // The URL to redirect to
+                    }, 3000); // Time delay for redirect
+                } else {
+                    console.error('Form container not found'); // Log an error if the element does not exist
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+</script>
+{% endblock scripts %}
