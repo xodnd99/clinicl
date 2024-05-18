@@ -10,7 +10,7 @@ class CustomPatientAdmin(UserAdmin):
     search_fields = ('iin', 'email', 'first_name', 'last_name')
 
     fieldsets = (
-        (None, {'fields': ('iin', 'email', 'photo')}),
+        (None, {'fields': ('iin', 'email')}),
         ('Change password', {'fields': ('change_password',)}),
         ('Important dates', {'fields': ('last_login',)}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),

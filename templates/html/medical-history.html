@@ -1,0 +1,162 @@
+{% extends "html/index.html" %}
+{% block extra_styles %}
+#medical-history-form-container {
+    background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    width: 800px;
+    max-height: auto;
+    min-height: 60vh;
+    max-width: 75%;
+    margin: 40px auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #fff;
+    position: relative;
+    border: 2px solid #0b520e;
+    transition: all 0.25s ease;
+    }
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #0b520e;
+}
+
+h2, h3 {
+    color: #fff;
+}
+    #medical-history-form-container i {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 30px;
+    font-weight: bolder;
+    }
+
+    #medical-history-form-container i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+    #cancel-button {
+    width: 80%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    #cancel-button:hover {
+    background-color: #0b520e; /* Darker shade when hovered */
+    }
+{% endblock %}
+{% block title %}Ваша медицинская история{% endblock %}
+
+{% block content %}
+<div id="medical-history-form-container" class="form">
+<i id="user-info-icon" class="far fa-window-close" onclick="redirectToHome()"></i>
+<h2 style="text-align: center;">Ваша медицинская история</h2>
+    <h3>Прикрепления:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата прикрепления</th>
+                <th>Организация</th>
+                <th>Врач</th>
+                <th>Комментарии</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attachment in attachments %}
+            <tr>
+                <td>{{ attachment.date_attached|date:"d M Y H:i" }}</td>
+                <td>{{ attachment.organization.name }}</td>
+                <td>{{ attachment.doctor.full_name }}</td>
+                <td>Первичное прикрепление / Изменение врача</td>
+                <td>{{ attachment.active }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Записи на прием:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата и время приема</th>
+                <th>Врач</th>
+                <th>Организация</th>
+                <th>Статус</th>
+                <th>Комментарии</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.date_time|date:"d M Y H:i" }}</td>
+                <td>{{ appointment.doctor.full_name }}</td>
+                <td>{{ appointment.organization.name }}</td>
+                <td id="status-{{ appointment.id }}">
+                    {% if appointment.date_time < now %}
+                        Завершено
+                    {% else %}
+                        {{ appointment.get_status_display }}
+                        {% if appointment.status == 'scheduled' %}
+                            <button id="cancel-button" onclick="cancelAppointment({{ appointment.id }})">Отменить</button>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>{{ appointment.comments }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function redirectToHome() {
+    window.location.href = '/';
+}
+function cancelAppointment(appointmentId) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/cancel-appointment/${appointmentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`status-${appointmentId}`).innerHTML = 'Отменено';
+        } else {
+            alert('Не удалось отменить запись: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
+
+</script>
+{% endblock %}

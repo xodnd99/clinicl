@@ -19,10 +19,13 @@ def login_signup_view(request):
             password = request.POST.get('password')
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
-            image_data = request.POST.get('capturedImage')
-            format, imgstr = image_data.split(';base64,')
-            ext = format.split('/')[-1]
-            photo = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+            image_data = request.POST.get('capturedImage', None)
+            photo = None  # Значение по умолчанию, если изображение не предоставлено
+
+            if image_data:
+                format, imgstr = image_data.split(';base64,')
+                ext = format.split('/')[-1]
+                photo = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
             if not (iin.isdigit() and len(iin) == 12):
                 messages.error(request, 'ИИН должен состоять ровно из 12 цифр')
@@ -57,6 +60,7 @@ def login_signup_view(request):
     return render(request, 'registration/login.html', {
         'tab': 'signup' if request.GET.get('tab') == 'signup' else 'login'
     })
+
 
 
 # views.py
@@ -246,7 +250,7 @@ def send_reset_code_login(request):
                     <body>
                         <p>Привет, {user.first_name} {user.last_name}! Ваш код для сброса пароля:</p>
                         <p><b>Код:</b> {code}</p>
-                        <p><img src="{image_url}" alt="Image description" width="200"></p> <!-- Вы можете добавить 'width' и 'height' для контроля размера изображения -->
+                        <p><img src="{image_url}" alt="Image description" width="400"></p> 
                     </body>
                 </html>
             """
@@ -346,7 +350,8 @@ def save_organization(request):
     return JsonResponse({'status': 'success', 'created': created})
 
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 
 def profile_link(request):
     # Передайте нужный контекст, если это необходимо
@@ -381,11 +386,12 @@ def handle_image_upload(request):
 
 
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Organization, Doctor, Patient, Attachment
 from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt  # Если вы используете AJAX запросы для отправки данных
 def attach_page(request):
     if request.method == 'POST':
         patient_iin = request.user.iin
@@ -395,12 +401,19 @@ def attach_page(request):
         doctor = Doctor.objects.get(iin=doctor_iin)
         organization = Organization.objects.get(ext_id=organization_ext_id)
 
-        # Check if an attachment already exists and update or create accordingly
-        attachment, _ = Attachment.objects.update_or_create(
+        # Отметить текущее активное прикрепление как неактивное
+        Attachment.objects.filter(patient__iin=patient_iin, active=True).update(active=False)
+
+        # Создание нового активного прикрепления
+        new_attachment = Attachment(
             patient_id=patient_iin,
-            defaults={'doctor': doctor, 'organization': organization}
+            doctor=doctor,
+            organization=organization,
+            active=True
         )
-        return JsonResponse({'success': True, 'message': 'Вы успешно прикрепилсь к поликлинике!'})
+        new_attachment.save()
+
+        return JsonResponse({'success': True, 'message': 'Вы успешно прикрепились к новой поликлинике!'})
 
     else:
         organizations = Organization.objects.all()
@@ -417,6 +430,7 @@ def attach_page(request):
         }
         return render(request, 'html/attach-page.html', context)
 
+
 @csrf_exempt
 def get_doctors_by_clinic(request, clinic_ext_id):
     doctors = list(Doctor.objects.filter(clinic__ext_id=clinic_ext_id).values('iin', 'full_name', 'position'))
@@ -427,10 +441,10 @@ def appoint_doctor(request):
     patient_iin = request.user.iin
 
     try:
-        patient_attachment = Attachment.objects.get(patient__iin=patient_iin)
+        patient_attachment = Attachment.objects.get(patient__iin=patient_iin, active=True)
         attached_clinic = patient_attachment.organization
         attached_doctor = patient_attachment.doctor
-        working_days = attached_doctor.working_days if attached_doctor else "Вос,Пон,Вто,Сре,Чет,Пят,Суб"  # default working days
+        working_days = attached_doctor.working_days   # default working days
 
         phone_numbers_list = attached_clinic.phone_numbers.split(',') if attached_clinic.phone_numbers else []
         doctor_image_url = request.build_absolute_uri(
@@ -438,7 +452,7 @@ def appoint_doctor(request):
     except Attachment.DoesNotExist:
         attached_clinic = None
         attached_doctor = None
-        working_days = "Вос,Пон,Вто,Сре,Чет,Пят,Суб"  # default or empty
+        working_days = None  # default or empty
         phone_numbers_list = []
         doctor_image_url = None
 
@@ -468,7 +482,7 @@ def update_doctor(request):
 
     # Получаем объекты доктора и прикрепления. Используйте get_object_or_404 для обработки отсутствующих записей.
     doctor = get_object_or_404(Doctor, iin=doctor_iin)
-    attachment = get_object_or_404(Attachment, patient__iin=patient_iin)
+    attachment = get_object_or_404(Attachment, patient__iin=patient_iin, active=True)
 
     attachment.doctor = doctor
     attachment.save()
@@ -486,31 +500,92 @@ def update_doctor(request):
     })
 
 
-from .models import Appointment
 
-
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+from django.utils.dateparse import parse_datetime
 
 @csrf_exempt
 @require_POST
 def create_appointment(request):
-    # Assuming that you are receiving a JSON payload
     data = json.loads(request.body)
+    patient_iin = request.user.iin  # get the patient's IIN from the logged-in user
+
+    # Check if the patient already has an active (scheduled) appointment
+    if Appointment.objects.filter(patient_id=patient_iin, status='scheduled').exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'У вас уже есть активная запись.'
+        })
+
     date_time_str = f"{data.get('date')} {data.get('time')}"
+    date_time = parse_datetime(date_time_str)
 
-    # Parse the string to a datetime object making sure to include timezone information
-    # Adjust 'Europe/Moscow' to your timezone
-    tz = pytz.timezone('Europe/Moscow')
-    date_time = timezone.make_aware(parse_datetime(date_time_str), tz)
+    # Make sure that the date_time is indeed parsed correctly and make it timezone-aware
+    if date_time is None:
+        return JsonResponse({'success': False, 'error': 'Invalid date-time format.'})
 
-    # Ensure the patient is authenticated and you retrieve their iin from their session or user object
+    # Convert the naive datetime to a timezone-aware datetime using the current timezone set in Django settings
+    aware_date_time = timezone.make_aware(date_time, timezone.get_current_timezone())
+
+    # Create the appointment
     appointment = Appointment.objects.create(
-        patient_id=request.user.iin,  # Assuming the patient is logged in and request.user is the patient
+        patient_id=patient_iin,
         doctor_id=data.get('doctor_iin'),
         organization_id=data.get('clinic_id'),
-        date_time=date_time,
+        date_time=aware_date_time,
         status='scheduled',
-        comments=''  # If you need to handle comments
+        comments=''
     )
-    appointment.save()
 
     return JsonResponse({'success': True})
+
+
+
+from django.shortcuts import render
+from .models import Patient, Appointment, Attachment, Doctor
+
+def medical_history(request):
+    patient_iin = request.user.iin
+    attachments = Attachment.objects.filter(patient__iin=patient_iin).select_related('doctor', 'organization').order_by('-date_attached')
+    appointments = Appointment.objects.filter(patient__iin=patient_iin).select_related('doctor', 'organization').order_by('-date_time')
+
+    return render(request, 'html/medical-history.html', {
+        'attachments': attachments,
+        'appointments': appointments,
+    })
+
+
+from django.http import JsonResponse
+import logging
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
+logger = logging.getLogger(__name__)
+
+@require_POST
+def cancel_appointment(request, appointment_id):
+    try:
+        appointment = get_object_or_404(Appointment, id=appointment_id, patient__iin=request.user.iin)
+        if appointment.date_time > timezone.now():
+            appointment.status = 'cancelled'
+            appointment.save()
+            logger.info(f"Appointment {appointment_id} cancelled successfully.")
+            return JsonResponse({'success': True})
+        else:
+            logger.warning(f"Attempt to cancel a past appointment {appointment_id}.")
+            return JsonResponse({'success': False, 'error': 'Нельзя отменить прошедшую запись.'}, status=400)
+    except Exception as e:
+        logger.error(f"Error in cancelling appointment {appointment_id}: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+from .models import Slide
+
+@login_required
+def home(request):
+    slides = Slide.objects.all()
+    return render(request, 'html/index.html', {'slides': slides})

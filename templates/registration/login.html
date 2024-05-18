@@ -414,6 +414,86 @@ h1 {
     #faceIdCapture canvas {
         width: 100%;
     }
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 90px;
+  height: 34px;
+        margin-bottom: 0;
+}
+    #switch-info {
+  position: relative;
+}
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(3, 84, 142, 0.9);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #06ad0d;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(55px);
+  -ms-transform: translateX(55px);
+  transform: translateX(55px);
+}
+
+/*------ ADDED CSS ---------*/
+.on
+{
+  display: none;
+}
+
+.on, .off
+{
+  color: white;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
+}
+
+input:checked+ .slider .on
+{display: block;}
+
+input:checked + .slider .off
+{display: none;}
+
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;}
     </style>
 </head>
 <body>
@@ -437,10 +517,46 @@ h1 {
 </button>
 
     <ul class="tab-group">
-        <li class="tab"><a href="?tab=signup" class="tab signup">Регистрация</a></li>
-        <li class="tab"><a href="?tab=login" class="tab login">Войти</a></li>
+        <li class="tab" onclick="document.getElementById('switch').style.display = 'none'; document.getElementById('switch-info').style.display = 'none';"><a href="?tab=signup" class="tab signup">Регистрация</a></li>
+        <li class="tab" onclick="document.getElementById('switch').style.display = 'block'; document.getElementById('switch-info').style.display = 'block';"><a href="?tab=login" class="tab login">Войти</a></li>
     </ul>
+<label class="switch" id="switch" style="display: none;">
+ <input type="checkbox" id="togBtn">
+ <div class="slider round">
+  <span class="on">ON</span>
+  <span class="off">OFF</span>
+ </div>
+</label>
+<label id="switch-info" style="display: none; margin-top: 0; margin-bottom: 5px;">
+    <div>
+         <p style="display: inline-block; margin-top: 4px; font-size: 17px; vertical-align: middle; color: #e0e0e0">Войти как врач</p>
+    </div>
+</label>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
+    
+    // Получаем текущий URL страницы
+    var currentPageUrl = window.location.href;
+    
+    // Получаем элемент, который нужно скрыть/показать в зависимости от состояния переключателя
+    var switchElement = document.getElementById('switch');
+    var switElement = document.getElementById('switch-info');
+    // Проверяем, находимся ли мы на странице входа или на странице регистрации
+    if (currentPageUrl.includes('tab=login')) {
+
+        // Показываем элемент
+        switchElement.style.display = 'block';
+        switElement.style.display='block'
+    } else if (currentPageUrl.includes('tab=signup')) {
+
+        // Скрываем элемент
+        switchElement.style.display = 'none';
+        switElement.style.display='none'
+    }
+});
+
+</script>
 
     <div id="signup" class="tab-content">
     <form id="signup-form" action="{% url 'login-signup' %}" method="post" enctype="multipart/form-data">
@@ -516,7 +632,7 @@ h1 {
     {% if 'success' in message.tags %}
         <script>
             let messageText = "{{ message }}";
-            if (messageText.includes("Registration successful")) {
+            if (messageText.includes("Регистрация успешна. Пожалуйста, войдите в систему.")) {
                 setTimeout(function () {
                     document.querySelector('#signup-form').innerHTML = `
                     <div class="success-animation" style="text-align: center; margin-top: 20%;">

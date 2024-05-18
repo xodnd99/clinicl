@@ -125,11 +125,11 @@ class Doctor(models.Model):
     email = models.EmailField(max_length=255)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     clinic = models.ForeignKey('clinicApp.Organization', on_delete=models.CASCADE, db_column='ext_id', related_name='doctors')
-    working_days = models.CharField(max_length=28, choices=DAYS_OF_WEEK, default="Вос,Пон,Вто,Сре,Чет,Пят,Суб")
+    working_days = models.CharField(max_length=28, choices=DAYS_OF_WEEK, default="Пон, Вто, Сре, Чет, Пят, Суб, Вос")
     profile_pic = models.ImageField(upload_to='doctor_images/', null=True, blank=True)
 
     def is_working_day(self, day):
-        return day in self.working_days.split(',')
+        return day in self.working_days.split(', ')
 
 
     def __str__(self):
@@ -142,16 +142,23 @@ class Doctor(models.Model):
 
 
 
+
+
 from django.db import models
 
 class Attachment(models.Model):
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, to_field='iin', related_name='attachment', db_column='patient_iin')
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, to_field='iin', related_name='attachments', db_column='patient_iin')
     doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='patient_attachments', db_column='doctor_iin')
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, related_name='patient_attachments', db_column='organization_ext_id')
     date_attached = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)  # Поле, указывающее, активна ли эта запись
 
     def __str__(self):
-        return f"{self.patient.first_name} {self.patient.last_name} attached to {self.doctor.full_name} at {self.organization.name}"
+        status = "Активное" if self.active else "Историческое"
+        return f"{self.patient.first_name} {self.patient.last_name} прикреплен к {self.doctor.full_name} в {self.organization.name} ({status})"
+
+
+
 
 class Appointment(models.Model):
     # Статусы записи
@@ -166,7 +173,7 @@ class Appointment(models.Model):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, db_column='organization_ext_id', related_name='appointments')
     date_time = models.DateTimeField() # Дата и время приема
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='scheduled')
-    comments = models.TextField(blank=True, null=True) # Поле для комментариев
+    comments = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Appointment for {self.patient} with {self.doctor} on {self.date_time.strftime('%Y-%m-%d %H:%M')}"
@@ -174,3 +181,11 @@ class Appointment(models.Model):
     class Meta:
         # Опционально: добавьте дополнительные настройки, такие как уникальные вместе или порядок по умолчанию
         ordering = ['-date_time']
+
+class Slide(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(upload_to='slides_images/')
+
+    def __str__(self):
+        return self.title

@@ -1,5 +1,8 @@
 import random
+from django.core.files.base import ContentFile
 from clinicApp.models import Doctor, Organization
+import base64
+import time
 
 # Русские имена, фамилии и отчества
 russian_names = {
@@ -31,15 +34,15 @@ DAYS_OF_WEEK = [
     'Пон', 'Вто', 'Сре', 'Чет', 'Пят'
 ]
 
+
 def random_working_days():
     # Генерация от 2 до 4 случайных рабочих дней
-    return ','.join(random.sample(DAYS_OF_WEEK, random.randint(2, 5)))
+    return ','.join(random.sample(DAYS_OF_WEEK, random.randint(3, 5)))
+
 
 # Функция для генерации случайного ИИН
 def generate_iin():
     return ''.join([str(random.randint(0, 9)) for _ in range(12)])
-
-
 
 
 # Функция для генерации случайного номера телефона
@@ -71,12 +74,23 @@ def transliterate(name):
     transliterated = ''.join(letters.get(char, char) for char in name)
     return transliterated
 
-# Используйте функцию транслитерации в генерации email
+
 def generate_email(last_name, first_name):
     transliterated_last_name = transliterate(last_name)
     transliterated_first_name = transliterate(first_name[0])
-    return f"{transliterated_last_name.lower()}.{transliterated_first_name.lower()}@clinics.kz"
+    base_email = f"{transliterated_last_name.lower()}.{transliterated_first_name.lower()}@clinics.kz"
 
+    email = base_email
+    counter = 1
+    while Doctor.objects.filter(email=email).exists():
+        if counter <= len(first_name):
+            transliterated_first_name_extended = transliterate(first_name[:counter + 1])
+            email = f"{transliterated_last_name.lower()}.{transliterated_first_name_extended.lower()}@clinics.kz"
+        else:
+            email = f"{transliterated_last_name.lower()}.{transliterated_first_name.lower()}{counter}@clinics.kz"
+        counter += 1
+
+    return email
 
 
 def generate_full_name_and_email(nationality, gender):
@@ -100,13 +114,14 @@ def generate_full_name_and_email(nationality, gender):
 
 organizations = Organization.objects.all()
 for org in organizations:
+    print(f"Processing organization: {org.name}")
     for _ in range(6):  # Предположим, мы хотим добавить по 6 врачей для каждой организации
         nationality = random.choice(['russian', 'kazakh'])
         gender = random.choice(['male', 'female'])
         full_name, email = generate_full_name_and_email(nationality, gender)
         working_days = random_working_days()
 
-        Doctor.objects.create(
+        doctor = Doctor(
             iin=generate_iin(),
             full_name=full_name,
             position=random.choice(positions),
@@ -115,5 +130,6 @@ for org in organizations:
             clinic=org,
             working_days=working_days
         )
-
-
+        doctor.set_password('defaultpassword')  # Устанавливаем хэшированный пароль
+        doctor.save()
+        print(f"Created doctor: {doctor.full_name}, email: {doctor.email}, clinic: {org.name}")

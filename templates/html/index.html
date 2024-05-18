@@ -20,6 +20,16 @@
         .background-content {
             min-height: 100%;
         }
+        #hamburger {
+    display: flex;
+    align-items: center;  /* Center vertically */
+    justify-content: center;  /* Center horizontally */
+    height: 100%;  /* Take full height to align properly */
+}
+        #hamburger {
+    position: relative;
+    top: -30px;  /* Adjust this value to move the logo upwards */
+}
         .top-panel {
             background: rgba(19, 35, 47, 0.9);
             padding: 8px;
@@ -131,8 +141,8 @@
         {% block extra_styles %}
             #map-container {
                 position: relative;
-                width: 48vw; /* Ширина рамки */
-                height: 75vh; /* Высота рамки */
+                width: 98.3vw; /* Ширина рамки */
+                height: 85vh; /* Высота рамки */
                 margin: 8px auto; /* Отступы сверху и снизу для центрирования по вертикали */
                 border: 8px solid #06ad0d; /* Стиль и цвет рамки */
                 border-radius: 8px; /* Скругление углов рамки */
@@ -143,15 +153,15 @@
             }
 
             #map {
-                width: 48vw; /* Ширина карты */
-                height: 65vh; /* Высота карты */
+                width: 98.3vw; /* Ширина карты */
+                height: 75vh; /* Высота карты */
                 position: absolute; /* Абсолютное позиционирование */
                 max-width: 100%;
             }
         {% endblock %}
 
         .sidebar {
-            width: 49.5vw;
+            width: 100vw;
             height: 200vh;
             float: left;
             background: rgba(19, 35, 47, 0.9);
@@ -167,45 +177,7 @@
             border-bottom: 0;
              border-top: 0;
         }
-
-        .lower-content {
-            width: 48vw;
-            height: 121.5vh;
-            float: right;
-            background: rgba(19, 35, 47, 0.9);
-            padding: 0;
-            max-width: 100vw;
-            border-radius: 0;
-            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
-            font-size: 20px;
-            color: white;
-            position: relative;
-            border: 1.5px solid #0b520e;
-            margin-bottom: 0;
-            border-bottom: 0;
-            min-height: 121.5vh;
-            min-width: 49vw;
-            z-index: 1;
-        }
         
-        #lower-content-container {
-                position: relative;
-                width: 48.05vw; /* Ширина рамки */
-                height: 65vh; /* Высота рамки */
-                margin: 0; /* Отступы сверху и снизу для центрирования по вертикали */
-                border: 8px solid #06ad0d; /* Стиль и цвет рамки */
-                border-radius: 0; /* Скругление углов рамки */
-                overflow: hidden; /* Скрытие контента, выходящего за рамку */
-                float: right;
-                vertical-align: top; /* Выравнивание по правому краю */
-                max-width: 100%;
-            z-index: 2;
-}
-        .policy-container {
-            position: relative;
-            align-items: flex-start;
-            font-family: 'Arial', sans-serif;
-        }
     .end-content {
         width: 100%;
             display: inline-block;
@@ -291,26 +263,7 @@
         border: none;
         overflow: hidden;
     }
-    .lower-content, #lower-content-container {
-    width: 100%;
-    float: none;
-    max-width: none;
-    height: auto; /* Если вы хотите, чтобы высота была автоматически расчитана */
-    padding: 0; /* Если требуется сбросить внутренние отступы */
-    margin: 0 auto; 
-        border: none;
-        overflow: hidden;/* Убедитесь, что нет внешних отступов, которые мешают ширине 100% */
-  }
-   #lower-content-container {
-    width: 97%;
-    float: none;
-    max-width: none;
-    height: auto; /* Если вы хотите, чтобы высота была автоматически расчитана */
-    padding: 0; /* Если требуется сбросить внутренние отступы */
-    margin: 0 auto; 
-        border: none;
-        overflow: hidden;/* Убедитесь, что нет внешних отступов, которые мешают ширине 100% */
-  }
+
   .display-flex-colm {
     flex-direction: column;
   }
@@ -426,7 +379,8 @@ nav ul li:last-child {
   display: flex;
   justify-content: space-between;
   align-items: center; 
-  width: 45%;
+  width: 48%;
+    height: 25vh;
   margin: 20px;
   padding: 10px;
   background-color: #070761;
@@ -484,18 +438,265 @@ nav ul li:last-child {
   fill: white; /* SVG color */
   min-width: 50px; /* Set a min-width for the svg */
 }
+    .modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Оставайтесь на месте */
+    left: 0;
+    top: 0;
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    overflow: auto; /* Включите прокрутку, если нужно */
+    background-color: rgb(0,0,0); /* Цвет фона */
+    background-color: rgba(0,0,0,0.8); /* Черный с непрозрачностью */
+    z-index: 1000; /* Убедитесь, что модальное окно находится над другими элементами */
+    }
+
+    .modal-content {
+    background: rgba(19, 35, 47, 0.9);
+    padding: 20px;
+    width: 40%;
+    margin: 80px auto;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #fff;
+    position: relative;
+    border: 2px solid #0b520e;
+    transition: all 0.25s ease;
+    height: auto;
+    }
+    .modal-content i {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 30px;
+    font-weight: bolder;
+    }
+
+    .modal-content i:hover {
+    color: lawngreen;
+    font-size: 38px;
+    }
+.top-panel-first {
+    background: rgba(160, 179, 176, 0.34);
+    width: 100%; /* Занимает всю ширину */
+    height: 4vh;
+    border-radius: 0px;
+    box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+    border: 1.5px solid #0b520e;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    align-items: center; /* Выравнивание элементов по вертикали */
+    justify-content: space-around; /* Равномерное распределение элементов */
+}
+
+.top-menu-link {
+    cursor: pointer;
+    font-size: 17px;
+    color: #fff;
+    padding: 10px;
+    overflow: hidden;
+    position: relative;
+    transition: color 0.3s;
+}
+.footer-links {
+    display: flex;
+    width: 100%; /* Занимает всю ширину контейнера .top-panel-first */
+    justify-content: space-around; /* Равномерное распределение ссылок */
+    list-style: none; /* Убирает стили списка, если это <ul> */
+    padding: 0; /* Убирает стандартные отступы */
+}
+.top-menu-link::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to left, rgba(0,255,0,0), rgba(50,205,50,0.75), rgba(0,255,0,0));
+    animation: flameRise 0.75s ease-in-out forwards;
+    display: none;
+}
+
+.top-menu-link:hover::after {
+    display: block;
+}
+
+@keyframes flameRise {
+    0% { top: 100%; height: 2px; }
+    100% { top: 0; height: 100%; }
+}
+   .faq-container {
+    margin: 20px;
+    background-color: #2c3e50;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.faq-item {
+    border-bottom: 1px solid #34495e;
+    cursor: pointer;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    padding: 20px;
+    color: #ecf0f1;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+}
+
+.faq-answer {
+    padding: 20px;
+    color: #ffffff;
+    display: none;
+    font-size: 16px;
+    line-height: 1.6;
+    background-color: #2b3a4a;
+    border-top: 1px solid #263543;
+}
+ .news-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.news-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.news-icon img {
+    width: 300px;
+    height: 180px;
+    margin-right: 10px;
+}
+
+.news-info h3 {
+    margin: 0;
+    color: #89e38f;
+}
+
+.news-info p {
+    font-size: 18px;
+    color: #b9b9b9;
+}
+#editor-container {
+  height: 300px;
+  background-color: white; /* Белый фон редактора */
+  border: 1px solid #ccc; /* Граница вокруг редактора */
+  font-family: 'Arial', sans-serif; /* Шрифт текста в редакторе */
+    color: black;
+    font-size: 15px;
+}
+
+
+.rating {
+    display: flex;
+    justify-content: flex-start;
+    margin: 10px 0;
+}
+
+.star {
+    cursor: pointer;
+    font-size: 50px;
+    color: #ccc;
+    margin-right: 5px;
+}
+
+.star:hover{
+    color: gold;
+}
+#submitFeedback {
+        background: rgba(160, 179, 176, 0.25);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 10px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+        white-space: nowrap;
+        width: calc(100% - 20px);
+    }
+    #submitFeedback:hover {
+        background: #1ab188; /* Темнее зеленый при наведении */
+    }
+/* Стили для слайдера */
+.news-tips-slider {
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.slide-container {
+    opacity: 0; /* Начальное состояние: слайды невидимы */
+    transform: translateY(50px); /* Немного смещаем вниз для эффекта появления */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.slide {
+    position: relative;
+    width: 100%;
+    height: 370px;
+    background-size: cover;
+    background-position: center;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Анимация появления */
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.slide-container:nth-child(odd) .slide {
+    animation: slideInLeft 1s forwards;
+}
+
+.slide-container:nth-child(even) .slide {
+    animation: slideInRight 1s forwards;
+}
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
     </style>
 <link rel="icon" href="/media/tab-icon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
 <div class="background-content">
-<div class="top-panel">
+<div class="top-panel" style="height: 60px;">
     <div id="hamburger">
-        <div></div>
-        <div></div>
-        <div></div>
-        <a>Menu</a>
+        <img src="/media/img_6.png" style="width: 85px; height: 85px;">
     </div>
     <div class="search-container">
         <label>
@@ -506,7 +707,7 @@ nav ul li:last-child {
     <div class="button-container">
         {% if user.is_authenticated %}
             <div class="user-menu" onclick="toggleMenu()" onmouseleave="closeMenu()">
-                <span class="user-name">{{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
+                <span class="user-name" style="font-size: 20px;"><i class="fas fa-user"></i> {{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
                 <div id="dropdown" class="dropdown-content">
                     <a href="{% url 'profile_link' %}"><i class="fas fa-user-circle"></i> Личный кабинет</a>
                     <a href="#notifications"><i class="fas fa-bell"></i> Уведомления </a>
@@ -524,7 +725,277 @@ nav ul li:last-child {
         {% endif %}
     </div> 
 </div>
-    
+<div class="top-panel-first">
+    <div class="footer-links">
+        <div class="top-menu-link" onclick="openModal('termsModal')">Пользовательское соглашение</div>
+        <div class="top-menu-link" onclick="openModal('privacyModal')">Политика конфиденциальности</div>
+        <div class="top-menu-link" onclick="openModal('tipsModal')">Советы и рекомендации</div>
+        <div class="top-menu-link" onclick="openModal('faqModal')">Часто задаваемые вопросы</div>
+        <div class="top-menu-link" onclick="openModal('newsModal')">Новости и обновления</div>
+        <div class="top-menu-link" onclick="openModal('feedbackModal')">Обратная связь</div>
+    </div>
+</div>
+
+<!-- Модальные окна для каждого пункта -->
+<div id="termsModal" class="modal">
+    <div class="modal-content">
+                    <i id="close-modal" class="far fa-window-close" onclick="closeModal('termsModal')"></i>
+        <span class="close" onclick="closeModal('termsModal')"></span>
+        <h1 style="text-align: center; color: #13a178">Информация о пользовательском соглашении.</h1>
+
+    <h2>1. Общие положения</h2>
+    <p><strong>1.1. Описание сервиса</strong><br>
+    "Мед-Портал Алматы" (далее - "Сервис") представляет собой интерактивную платформу для пользователей, позволяющую прикрепляться к медицинским учреждениям города Алматы, записываться на прием к врачам, просматривать результаты анализов и управлять личной медицинской информацией, включая идентификационные данные (ИИН).</p>
+    <p><strong>1.2. Подтверждение согласия</strong><br>
+    Используя Сервис, Вы подтверждаете свое согласие с условиями данного Соглашения. Если Вы не согласны с условиями, необходимо прекратить использование Сервиса.</p>
+
+    <h2>2. Условия регистрации и учетной записи</h2>
+    <p><strong>2.1. Регистрация в сервисе</strong><br>
+    Регистрация на Сервисе требует предоставления персональных данных, включая, но не ограничиваясь, ИИН, имя, фамилия, контактный номер телефона, и электронная почта. Все предоставленные данные должны быть актуальны и точны.</p>
+    <p><strong>2.2. Конфиденциальность и безопасность</strong><br>
+    Пользователь несет ответственность за конфиденциальность своих регистрационных данных, включая пароль. Все действия, совершенные с использованием учетной записи пользователя, признаются действиями самого пользователя.</p>
+
+    <h2>3. Права и обязанности сторон</h2>
+    <p><strong>3.1. Обязанности пользователя</strong><br>
+    - Использовать Сервис только для законных целей в соответствии с законодательством РК.<br>
+    - Не использовать Сервис для распространения вирусов, вредоносных программ, или иных технологий, которые могут навредить Сервису или интересам других пользователей.<br>
+    - Не осуществлять попытки несанкционированного доступа к другим учетным записям, компьютерным системам или сетям, подключенным к Сервису.</p>
+    <p><strong>3.2. Права сервиса</strong><br>
+    - Вносить изменения в условия Соглашения без предварительного уведомления. Продолжение использования Сервиса после внесения изменений означает согласие пользователя с обновленными условиями.<br>
+    - Ограничивать доступ к Сервису для отдельных пользователей, а также прекращать или приостанавливать работу Сервиса по своему усмотрению.</p>
+
+    <h2>4. Ответственность сторон</h2>
+    <p><strong>4.1. Ограничение ответственности</strong><br>
+    Сервис стремится обеспечить высокий уровень доступности и надежности своих услуг, но не гарантирует абсолютную безошибочность своей работы.</p>
+
+    <h2>5. Заключительные положения</h2>
+    <p><strong>5.1. Юрисдикция и разрешение споров</strong><br>
+    Все возможные споры из Соглашения или в связи с ним подлежат разрешению в соответствии с законодательством Республики Казахстан.</p>
+    </div>
+</div>
+<div id="privacyModal" class="modal">
+    <div class="modal-content">
+                            <i id="close-modal" class="far fa-window-close" onclick="closeModal('privacyModal')"></i>
+        <span class="close" onclick="closeModal('privacyModal')"></span>
+        <h2 style="text-align: center; color: #13a178; font-size: 30px">Детали нашей политики конфиденциальности.</h2>
+         <h2>1. Введение</h2>
+    <p>Эта Политика конфиденциальности описывает, как "Мед-Портал Алматы" собирает, использует и защищает личные данные пользователей, зарегистрированных на платформе.</p>
+
+    <h2>2. Сбор личной информации</h2>
+    <p>При регистрации на Сервисе, пользователи предоставляют следующие данные:</p>
+    <ul>
+        <li>ИИН;</li>
+        <li>Имя и фамилия;</li>
+        <li>Электронная почта;</li>
+        <li>Контактный телефон.</li>
+    </ul>
+    <p>Эта информация необходима для предоставления доступа к функциям Сервиса.</p>
+
+    <h2>3. Использование информации</h2>
+    <p>Собранная информация используется для:</p>
+    <ul>
+        <li>Идентификации пользователя в системе;</li>
+        <li>Предоставления доступа к медицинским услугам;</li>
+        <li>Уведомления о изменениях в Сервисе или в условиях предоставления услуг.</li>
+    </ul>
+
+    <h2>4. Защита информации</h2>
+    <p>Сервис применяет различные технические и организационные меры для защиты личных данных пользователей, включая, но не ограничиваясь, шифрование данных и контроль доступа.</p>
+
+    <h2>5. Права пользователей</h2>
+    <p>Пользователи имеют право на доступ к своим личным данным, их исправление, удаление или ограничение обработки. Также пользователи могут в любой момент отозвать согласие на обработку своих данных.</p>
+
+    <h2>6. Изменения в политике конфиденциальности</h2>
+    <p>Сервис оставляет за собой право вносить изменения в Политику конфиденциальности. Все изменения будут опубликованы на данной странице. Продолжение использования Сервиса после внесения изменений означает согласие пользователя с обновленной политикой.</p>
+
+    <h2>7. Контактная информация</h2>
+    <p>По всем вопросам, связанным с обработкой и защитой личных данных, пользователи могут обратиться по адресу электронной почты support@med-portal-almaty.kz.</p>
+    </div>
+</div>
+<div id="tipsModal" class="modal">
+    <div class="modal-content">
+                                    <i id="close-modal" class="far fa-window-close" onclick="closeModal('tipsModal')"></i>
+        <span class="close" onclick="closeModal('tipsModal')"></span>
+        <h2 style="text-align: center; color: #13a178; font-size: 30px">Полезные советы для вашего здоровья и благополучия.</h2>
+        <h2>1. Правильное питание</h2>
+    <p>Поддержание сбалансированного рациона является ключом к хорошему здоровью. Включите в свой рацион больше фруктов, овощей, цельнозерновых продуктов, белков и здоровых жиров.</p>
+
+    <h2>2. Регулярные физические упражнения</h2>
+    <p>Регулярные упражнения помогают поддерживать физическую форму, улучшают настроение и уменьшают риск развития множества заболеваний. Стремитесь к минимум 30 минутам умеренной активности большинство дней недели.</p>
+
+    <h2>3. Достаточный сон</h2>
+    <p>Качественный сон крайне важен для общего здоровья. Взрослым рекомендуется получать не менее 7-8 часов сна каждую ночь.</p>
+
+    <h2>4. Управление стрессом</h2>
+    <p>Научитесь управлять стрессом с помощью релаксационных техник, таких как медитация, дыхательные упражнения и йога. Это может помочь снизить риск развития хронических заболеваний.</p>
+
+    <h2>5. Регулярные медицинские осмотры</h2>
+    <p>Регулярные визиты к врачу для профилактических осмотров и скрининга заболеваний помогут обнаружить потенциальные проблемы на ранних стадиях, когда их лечение наиболее эффективно.</p>
+
+    <h2>6. Профилактика заболеваний</h2>
+    <p>Соблюдение рекомендаций по вакцинации и регулярное мытье рук являются эффективными способами предотвращения многих инфекционных заболеваний.</p>
+
+    <h2>7. Информированность о состоянии здоровья</h2>
+    <p>Используйте доступные вам инструменты и ресурсы для мониторинга вашего здоровья, такие как приложения для отслеживания физической активности, диеты и качества сна.</p>
+
+    </div>
+</div>
+<div id="faqModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('faqModal')"></span>
+                                            <i id="close-modal" class="far fa-window-close" onclick="closeModal('faqModal')"></i>
+
+        <h2 style="text-align: center; color: #13a178; font-size: 30px">Ответы на часто задаваемые вопросы.</h2>
+            <div class="faq-item">
+                <div class="faq-question">Как войти в систему?</div>
+                <div class="faq-answer">Для входа в систему необходимо нажать на кнопку "Войти", расположенную в верхней части экрана, и ввести свои учетные данные. Если у вас еще нет аккаунта, вы можете зарегистрироваться, выбрав опцию "Регистрация".</div>
+            </div>
+            <div class="faq-item">
+                 <div class="faq-question">Как прикрепиться к поликлинике?</div>
+                <div class="faq-answer">Для прикрепления к поликлинике выберите раздел "Прикрепление к поликлинике" в меню, затем выберите нужную клинику из списка и следуйте инструкциям для завершения процесса прикрепления.</div>
+            </div>
+            <div class="faq-item">
+                 <div class="faq-question">Как записаться к врачу?</div>
+                <div class="faq-answer">Перейдите в раздел "Запись к врачу", выберите специальность врача, удобное для вас время и подтвердите запись. Вы получите подтверждение записи по электронной почте или SMS.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Где посмотреть результаты анализов?</div>
+                <div class="faq-answer">Результаты анализов доступны в вашем личном кабинете. Перейдите в раздел "Результаты анализов", где будут отображены все доступные результаты с датами проведения исследований.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Как изменить персональные данные?</div>
+                <div class="faq-answer">Для изменения персональных данных перейдите в раздел "Личный кабинет", где вы сможете редактировать информацию о себе, такую как контактные данные, пароль и другие.</div>
+            </div>
+         <div class="faq-item">
+        <div class="faq-question">Как войти в систему?</div>
+        <div class="faq-answer">Для входа в систему нажмите на кнопку "Войти" в верхнем правом углу экрана и введите свои учетные данные.</div>
+    </div>
+    <div class="faq-item">
+        <div class="faq-question">Как прикрепиться к поликлинике?</div>
+        <div class="faq-answer">Выберите в меню опцию "Прикрепление к поликлинике", затем следуйте инструкциям для выбора клиники и подтверждения прикрепления.</div>
+    </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    $('.faq-question').click(function() {
+        $(this).next('.faq-answer').slideToggle(200);
+        $(this).parent().siblings().children('.faq-answer').slideUp(200); // Закрыть другие ответы
+    });
+});
+    </script>
+</div>
+<div id="newsModal" style="width: 100vw" class="modal">
+    <div class="modal-content">
+        <i id="close-modal" class="far fa-window-close" onclick="closeModal('newsModal')"></i>
+        <span class="close" onclick="closeModal('newsModal')"></span>
+        <h2 style="text-align: center; color: #13a178; font-size: 30px">Последние новости и обновления сервиса.</h2>
+        <div class="news-list">
+            <div class="news-item">
+                <div class="news-icon">
+                    <img src="/media/img_4.png" alt="ЕГОВ">
+                </div>
+                <div class="news-info">
+                    <h3>Интеграция с EGOV</h3>
+                    <p>Теперь вы можете прикрепиться к поликлинике прямо через наш портал с использованием вашего цифрового ИИН.</p>
+                </div>
+            </div>
+            <div class="news-item">
+                <div class="news-icon">
+                    <img src="/media/img_3.png" alt="Запись к врачу">
+                </div>
+                <div class="news-info">
+                    <h3>Онлайн запись к врачам</h3>
+                    <p>Запишитесь к врачу не выходя из дома. Пользуйтесь удобным интерфейсом выбора специалиста и времени визита.</p>
+                </div>
+            </div>
+            <div class="news-item">
+                <div class="news-icon">
+                    <img src="/media/img_5.png" alt="Управление данными">
+                </div>
+                <div class="news-info">
+                    <h3>Управление медицинскими данными</h3>
+                    <p>Все ваши медицинские данные теперь собраны в одном месте. Вы можете просматривать историю болезней, результаты анализов и текущие назначения врачей.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+                <i id="close-modal" class="far fa-window-close" onclick="closeModal('feedbackModal')"></i>
+        <span class="close" onclick="closeModal('feedbackModal')"></span>
+        <h2 style="text-align: center; color: #13a178; font-size: 30px">Оставьте свой отзыв или предложение для улучшения нашего сервиса.</h2>
+        <form id="feedbackForm">
+            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<div id="editor-container"></div>
+            <div class="rating">
+                <label class="star" data-value="1">&#9733;</label>
+                <label class="star" data-value="2">&#9733;</label>
+                <label class="star" data-value="3">&#9733;</label>
+                <label class="star" data-value="4">&#9733;</label>
+                <label class="star" data-value="5">&#9733;</label>
+            </div>
+            <input type="button" id="submitFeedback" onclick="submitFeedback()" value="Отправить">
+        </form>
+        <script>
+  var quill = new Quill('#editor-container', {
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['image', 'code-block']
+      ]
+    },
+    placeholder: 'Начните ввод текста...',
+    theme: 'snow'  // Или 'bubble'
+  });
+</script>
+
+        <script>
+            document.querySelectorAll('.star').forEach(star => {
+    star.onclick = () => {
+        const value = star.getAttribute('data-value');
+        document.querySelectorAll('.star').forEach(innerStar => {
+            if (innerStar.getAttribute('data-value') <= value) {
+                innerStar.style.color = 'gold';
+            } else {
+                innerStar.style.color = '#ccc';
+            }
+        });
+    };
+});
+
+function submitFeedback() {
+    const feedback = document.getElementById('feedbackText').value;
+    const rating = document.querySelector('.star[style*="color: gold"]').getAttribute('data-value');
+    console.log('Feedback:', feedback, 'Rating:', rating); // Замените на отправку данных на сервер
+    closeModal('feedbackModal');
+}
+        </script>
+    </div>
+</div>
+<script>
+function openModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "block";
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = "none";
+}
+
+// Закрытие модального окна при клике вне его области
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+    }
+}
+</script>
+</div>
 <div id="container">
     <nav class="clear">
             <link rel="stylesheet" type="text/css" media="all" href="/static/style.css"/>
@@ -534,7 +1005,7 @@ nav ul li:last-child {
     <li><a href="#"><i class="fas fa-directions"></i>Активные направления</a></li>
     <li><a href="#"><i class="fas fa-vial"></i> Анализы</a></li>
     <li><a href="#"><i class="fas fa-notes-medical"></i> Платежи и статус ОСМС</a></li>
-    <li><a href="#"><i class="fas fa-book-medical"></i> Медицинская история</a></li>
+    <li><a href="{% url 'medical_history' %}"><i class="fas fa-book-medical"></i> Медицинская история</a></li>
       <li><a href='https://i-teka.kz/almaty/medicamentsalphabetically' target="_blank"><i class="fas fa-duotone fa-pills"></i> Поиск лекарств</a></li>
   </ul>
 </nav>
@@ -562,16 +1033,16 @@ nav ul li:last-child {
 </div>
 
 
-<div class="sidebar" style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #cdcdcd; ">
+<div class="sidebar" style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #cdcdcd; height: auto">
 
     <div id="side" style="border: 2px solid #033506; margin: 20px"><h1 style="font-size: 30px; text-align: center;">Добро пожаловать в Ваш личный медицинский портал</h1>
-    <p style="padding-left: 25px; padding-right: 10px; font-size: 20px;">Поиск лучших медицинских специалистов, запись на прием и управление вашими медицинскими данными еще никогда не были такими простыми. Наша миссия — наполнить каждый день заботой о вашем благополучии. В портале клиник Алматы каждый шаг к здоровью становится легче и доступнее. Мы обеспечиваем лёгкий доступ к высококачественным медицинским услугам и заботимся о каждом аспекте вашего здоровья. Начните путь к лучшей жизни сегодня.</p>
-</div>
+    <p style="padding-left: 25px; padding-right: 10px; font-size: 20px;">Поиск лучших медицинских специалистов, запись на прием и управление вашими медицинскими данными еще никогда не были такими простыми. Наша миссия — наполнить каждый день заботой о вашем благополучии. В портале клиник Алматы каждый шаг к здоровью становится легче и доступнее. Мы обеспечиваем лёгкий доступ к высококачественным медицинским услугам и заботимся о каждом аспекте вашего здоровья. Начните путь к лучшей жизни сегодня. Мы предлагаем безопасный, надежный и быстрый способ управления вашим здоровьем и здоровьем вашей семьи. Наш портал позволяет вам вести электронную историю ваших посещений, управлять медицинскими записями и планировать ваше лечение в удобное для вас время. Мы объединяем высокие технологии и чуткое отношение специалистов, чтобы предоставить вам лучший опыт в уходе за здоровьем. С нами управление вашим здоровьем становится проще и удобнее. Мы предлагаем инновационный подход к медицинской помощи и здоровому образу жизни.</p>
+    </div>
     <div class="display-flex-colm" style="display: flex">
-<div id="attach" onclick="location.href='/attach-page/';">
+<div id="attach" onclick="requireLogin('attach-page')">
   <div class="text-and-image">
-    <img src="/media/removebg.png" style="width: 150px; height: 150px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Оформить прикрепление к поликлинике</p>
+    <img src="/media/removebg.png" style="width: 320px; height: 250px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Оформить прикрепление к поликлинике</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -580,10 +1051,10 @@ nav ul li:last-child {
     </svg>
   </div>
 </div>
-    <div id="attach" style="background-color: #018c65">
+    <div id="attach" style="background-color: #018c65" onclick="requireLogin('attach-page')">
   <div class="text-and-image">
-    <img src="/media/preview.png" style="width: 180px; height: 120px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Быстро и легко: проверьте анализы онлайн</p>
+    <img src="/media/preview.png" style="width: 350px; height: 200px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Быстро и легко: проверьте анализы онлайн</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -595,10 +1066,10 @@ nav ul li:last-child {
     </div>
     
     <div class="display-flex-colm" style="display: flex">
-<div id="attach" style="background-color: #018c65" onclick="location.href='appoint_doctor'">
+<div id="attach" style="background-color: #018c65" onclick="requireLogin('appoint_doctor')">
   <div class="text-and-image">
-    <img src="/media/img.png" style="width: 170px; height: 170px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Запись к врачу за один клик — позаботьтесь о своем здоровье</p>
+    <img src="/media/img.png" style="width: 350px; height: 300px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Запись к врачу за один клик — позаботьтесь о своем здоровье</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -609,8 +1080,8 @@ nav ul li:last-child {
 </div>
     <div id="attach" onclick="window.open('https://i-teka.kz/almaty/medicamentsalphabetically', '_blank');">
   <div class="text-and-image">
-    <img src="/media/drogue.png" style="width: 180px; height: 120px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Найдите нужные медикаменты за секунды</p>
+    <img src="/media/drogue.png" style="width: 300px; height: 200px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Найдите нужные медикаменты за секунды</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -621,10 +1092,10 @@ nav ul li:last-child {
 </div>
     </div>
         <div class="display-flex-colm" style="display: flex">
-<div id="attach">
+<div id="attach" onclick="requireLogin('attach-page')">
   <div class="text-and-image">
-    <img src="/media/img_1.png" style="width: 175px; height: 135px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Управляйте своими медицинскими направлениями легко и удобно</p>
+    <img src="/media/img_1.png" style="width: 320px; height: 220px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Управляйте своими медицинскими направлениями легко и удобно</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -633,10 +1104,10 @@ nav ul li:last-child {
     </svg>
   </div>
 </div>
-    <div id="attach" style="background-color: #018c65">
+    <div id="attach" onclick="requireLogin('attach-page')" style="background-color: #018c65">
   <div class="text-and-image">
-    <img src="/media/img_2.png" style="width: 180px; height: 110px;"> <!-- Replace with your image path -->
-    <p style="font-size: 20px;">Проверьте вашу медицинскую страховку за мгновение</p>
+    <img src="/media/img_2.png" style="width: 320px; height: 200px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Проверьте вашу медицинскую страховку за мгновение</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -647,50 +1118,57 @@ nav ul li:last-child {
 </div>
     </div>
     
-    
-    <div id="si" style="border: 2px solid #033506; margin: 20px;">
-        <h4 style="text-align: center; font-size: 25px;">Медицинские услуги нового поколения</h4>
-        <p style="padding-left: 25px;">Мы объединяем высокие технологии и чуткое отношение специалистов, чтобы предоставить вам лучший опыт в уходе за здоровьем. С нами управление вашим здоровьем становится проще и удобнее. Мы предлагаем инновационный подход к медицинской помощи и здоровому образу жизни.</p>
-    </div>
-<div class="lower-con" style="border: 2px solid #033506; margin: 20px;"><h3 style="text-align: center; font-size: 25px;">Почему выбирают нас</h3>
-    <p style="padding-right:10px; padding-left: 10px ">Мы предлагаем безопасный, надежный и быстрый способ управления вашим здоровьем и здоровьем вашей семьи. Наш портал позволяет вам вести электронную историю ваших посещений, управлять медицинскими записями и планировать ваше лечение в удобное для вас время.</p>
-</div>
+  <div id="myModal" class="modal">
+        <div class="modal-content">
+            <i id="close-modal" class="far fa-window-close" onclick="closeModal('myModal')"></i>
+            <p style="border: 1px solid #0b520e; padding: 15px; text-align: center;">Уважаемый пользователь</p>
 
-<div class="services" style="border: 2px solid #033506; margin: 20px;">
-  <h3 style="text-align: center; font-size: 25px;">Полный спектр медицинских услуг</h3>
-  <ul>
-    <li>Онлайн запись к врачу без очередей</li>
-    <li>Электронные направления и быстрые результаты анализов</li>
-    <li>Удобный просмотр и оплата услуг в один клик</li>
-    <li>Поиск лекарств в аптеках г.Алматы</li>
-    <li>Личный кабинет с полным контролем медицинской истории</li>
-      <li>Доступ к электронной медицинской карте 24/7</li>
-      <li>Удобный способ прикрепления к поликлиникам города</li>
-  </ul>
-</div>
-<div id="si" style="border: 2px solid #033506; margin: 20px;">
-        <h4 style="text-align: center; font-size: 25px;">Забота о здоровье доступна каждому</h4>
-        <p style="padding-left: 25px;">Всегда на связи, всегда важны для нас. Мы работаем для вашего спокойствия и благополучия. Сконцентрируйтесь на важном, оставив заботы о здоровье нам.</p>
+<p style="border: 1px solid #0b520e; padding: 15px; text-align: center;">Для выполнения этого действия в системе требуется авторизация. Пожалуйста, войдите в свой аккаунт или зарегистрируйтесь, если у вас еще нет учетной записи. Это позволит вам получить доступ ко всем функциям и возможностям нашего сервиса.</p>
+        </div>
+          <script>
+     function requireLogin(url) {
+    if (!isUserAuthenticated) {
+        openModal('myModal');
+    } else {
+        window.location.href = url; // Перенаправление на заданный URL, если пользователь авторизован
+    }
+}
+    </script>
     </div>
+<div class="news-tips-slider">
+    {% for slide in slides %}
+    <div class="slide-container">
+        <div class="slide" style="background-image: url('{{ slide.image.url }}');">
+            <div class="slide-content">
+                <h2 style="color: #07f1ae">{{ slide.title }}</h2>
+                <p>{{ slide.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+</div>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const slideContainers = document.querySelectorAll('.slide-container'); // Обращаемся к контейнерам
 
-    
-    
-<div class="lower-content" style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #cdcdcd;">
-    <div id="lower-content-container" style="margin-bottom: 20px">
-    <img src="/media/4.webp" class="img-logo" style="width: 100%; height: 100%;">
-</div>
-    <div class="policy-container">
-    <div class="privacy-policy" style="border: 2px solid #033506; margin: 20px;">
-        <h4 style="text-align: center; font-size: 25px;">Политика конфеденциальности</h4>
-        <p style="padding-left: 20px; padding-right: 20px">Ваша приватность - наш приоритет. В рамках нашей Политики конфиденциальности мы обеспечиваем непрерывную защиту и безопасность ваших персональных данных. Мы стремимся к прозрачности в обработке вашей информации и используем её исключительно для улучшения вашего пользовательского опыта, уделяя внимание не только законодательным требованиям, но и вашему комфорту и доверию.</p>
-    </div>
-    <div class="pri-policy" style="border: 2px solid #033506; margin: 20px;">
-        <h4 style="text-align: center; font-size: 25px;">Пользовательское соглашение</h4>
-        <p style="padding-left: 20px; padding-right: 20px">Присоединяясь к нашему сообществу, вы соглашаетесь с условиями, которые направлены на создание позитивного и продуктивного взаимодействия. Наше Пользовательское соглашение задает правила и руководство по использованию наших услуг, обеспечивая вам полное понимание ваших прав и обязанностей. Мы ценим ваш выбор и стремимся предоставить вам сервисы высшего качества.</p>
-    </div>
-    </div>
-</div>
+    function checkVisibility() {
+        const triggerBottom = window.innerHeight / 5 * 4;
+
+        slideContainers.forEach(container => {
+            const slideTop = container.getBoundingClientRect().top;
+            if (slideTop < triggerBottom) {
+                container.classList.add('visible');
+            } else {
+                container.classList.remove('visible');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', checkVisibility);
+    checkVisibility(); // Проверка при загрузке страницы
+});
+    </script>
 {% endblock content %}
 
 

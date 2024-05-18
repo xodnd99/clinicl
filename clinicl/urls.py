@@ -26,6 +26,9 @@ urlpatterns = [
     path('update_doctor/', views.update_doctor, name='update_doctor'),
     path('find_user_view/', views.find_user_view, name='find_user_view'),
     path('create_appointment/', views.create_appointment, name='create_appointment'),
+    path('medical_history/', views.medical_history, name='medical_history'),
+    path('cancel-appointment/<int:appointment_id>', views.cancel_appointment, name='cancel-appointment'),
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

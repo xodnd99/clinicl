@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ['*']
 
 
 
+AUTH_USER_MODEL = 'clinicApp.Patient'
 
 
 INSTALLED_APPS = [
@@ -107,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'clinicApp.Patient'
 
 
 
@@ -117,7 +117,7 @@ AUTH_USER_MODEL = 'clinicApp.Patient'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Almaty'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -134,7 +134,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'esbolyegizekov@gmail.com'  # Замените на ваш реальный адрес Gmail
-EMAIL_HOST_PASSWORD = 'yjmt voth ofxw sycd'  # Пароль от вашего аккаунта Gmail
+EMAIL_HOST_PASSWORD = 'fsyt fqux xrhj fzwz'  # Пароль от вашего аккаунта Gmail
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -146,4 +146,5 @@ STATICFILES_DIRS = [
 CSRF_COOKIE_NAME = 'my_csrf_cookie'
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
+
 

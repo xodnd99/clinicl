@@ -113,6 +113,20 @@
     .button-change-on-hover:hover {
     background-color: #0b520e; /* Darker shade when hovered */
     }
+    
+    #closeModal-button{
+     width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+    #closeModal-button:hover{
+    background-color: #0b520e; 
+    }
     #book-appointment{
     margin-top: 20px;
     width: 100%;
@@ -215,6 +229,59 @@
     border-radius: 5px;
     transition: background-color 0.3s;
 }
+    .checkmark {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #4CAF50;
+  stroke-miterlimit: 10;
+  margin: 10% auto;
+  box-shadow: inset 0px 0px 0px #4CAF50;
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #4CAF50;
+  fill: #fff;
+  animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #4CAF50;
+  }
+}
+h1 {
+    font-size: 1.5rem; /* Уменьшаем размер шрифта */
+}
 {% endblock %}
 {% block title %}Запись к врачу{% endblock %}
 
@@ -274,44 +341,69 @@
             startDate: new Date(),
             isMultiple: false,  // Разрешить выбор только одной даты и времени
             onClick: function(ev, data) {
-                var d = data[0].split(' ')[0];
-                var t = data[0].split(' ')[1];
-                $('#selected-date').html(d);
-                $('#selected-time').html(t);
-            },
+    var selectedDateTime = new Date(data[0]); // Преобразование строки даты и времени в объект Date
+    var now = new Date(); // Текущее время
+
+    if (selectedDateTime <= now) {
+        showErrorModal('Выбранное время уже прошло. Пожалуйста, выберите другое время.');
+    } else {
+        var d = data[0].split(' ')[0];
+        var t = data[0].split(' ')[1];
+        $('#selected-date').html(d);
+        $('#selected-time').html(t);
+    }
+},
+
             onClickNavigator: function(ev, instance) {
                 
             }
         });
-       
+        function showErrorModal(message) {
+    var modal = document.getElementById("myModal");
+    var modalContent = modal.querySelector('.modal-content');
+    modalContent.innerHTML = `<h3 style="text-align: center; font-size: 30px;">Ошибка</h3><p>${message}</p><button id="closeModal-button" onclick="closeModal()">Закрыть</button>`;
+    modal.style.display = "block";
+}
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
+window.onclick = function(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target === modal) {
+        closeModal();
+    }
+}
 
+        
         function generateTimeSlots(workingDays, startTime, endTime, slotDuration) {
-            var slots = [[], [], [], [], [], [], []];
-            var daysOfWeek = ['Пят', 'Суб', 'Вос', 'Пон', 'Вто', 'Сре', 'Чет'];
-            var startHour = parseInt(startTime.split(':')[0], 10);
-            var startMinute = parseInt(startTime.split(':')[1], 10);
-            var endHour = parseInt(endTime.split(':')[0], 10);
-            var endMinute = parseInt(endTime.split(':')[1], 10);
+    var slots = [[], [], [], [], [], [], []];
+    var daysOfWeek = ['Пон', 'Вто', 'Сре', 'Чет', 'Пят', 'Суб', 'Вос'];
+    var startHour = parseInt(startTime.split(':')[0], 10);
+    var startMinute = parseInt(startTime.split(':')[1], 10);
+    var endHour = parseInt(endTime.split(':')[0], 10);
+    var endMinute = parseInt(endTime.split(':')[1], 10);
 
-            daysOfWeek.forEach((day, index) => {
-                if (workingDays.includes(day)) {
-                    var current = new Date();
-                    current.setHours(startHour, startMinute, 0);
-                    var end = new Date();
-                    end.setHours(endHour, endMinute, 0);
+    daysOfWeek.forEach((day, index) => {
+        if (workingDays.includes(day)) {
+            var current = new Date();
+            current.setHours(startHour, startMinute, 0);
+            var end = new Date();
+            end.setHours(endHour, endMinute, 0);
 
-                    while (current <= end) {
-                       var time = current.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-                        slots[index].push(time);
-                        current = new Date(current.getTime() + slotDuration * 60000);
-                    }
-                }
-            });
-            return slots;
+            while (current <= end) {
+                var time = current.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+                slots[index].push(time);
+                current = new Date(current.getTime() + slotDuration * 60000);
+            }
         }
     });
+    return slots;
+}
+    });
 })(jQuery);
-    </script>               
+    </script>
+                    <div id="message-container" style="text-align: center; margin-bottom: 15px; border: 1.5px solid #0b520e; padding: 10px;"></div>
                     <button class="button-change-on-hover-submit">Подтвердить запись</button>
                 </div>
             {% else %}
@@ -345,19 +437,45 @@ function bookAppointment() {
     var clinicId = "{{ attached_clinic.ext_id }}"; // Same assumption as above
 
     fetch('/create_appointment/', { 
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken // Make sure csrftoken is the correct value
-    },
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken // Make sure csrftoken is the correct value
+        },
         body: JSON.stringify({
             date: selectedDate,
             time: selectedTime,
             doctor_iin: doctorIin,
             clinic_id: clinicId
         })
+    }).then(response => response.json())
+    .then(data => {
+        var messageContainer = document.getElementById('message-container');
+        if (data.success) {
+            setTimeout(function () {
+                    document.querySelector('#appointment-form-container').innerHTML = `
+                    <div class="success-animation" style="text-align: center; margin-top: 20%;">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                        <h1>Ваша запись на прием успешно создана!</h1>
+                    </div>`;
+                    setTimeout(function () {
+                        window.location.href = "{% url 'medical_history' %}";
+                    }, 2500);
+                }, 0);
+        } else {
+                messageContainer.innerHTML = 'У вас уже есть назначенная встреча. Пожалуйста, просмотрите <a href="/medical_history" style="color: #AAF200;">Вашу медицинскую историю</a> для подробностей или ожидайте её завершения, чтобы назначить следующую консультацию.';
+        messageContainer.style.color = 'white';
+        }
     })
-    // ... the rest of your fetch code
+    .catch(error => {
+        // Handle any errors that occur during the fetch
+        var messageContainer = document.getElementById('message-container');
+        messageContainer.textContent = 'Ошибка при отправке запроса: ' + error;
+        messageContainer.style.color = 'red';
+    });
 }
 
 // Attach the bookAppointment function to your button
@@ -457,17 +575,16 @@ document.querySelector('.button-change-on-hover-submit').addEventListener('click
                 });
         }
 
-        function updateDoctorInfoOnPage(doctor) {
-            // Обновите DOM в соответствии с вашими элементами
-            var doctorInfoContainer = document.getElementById('doctor-info');
-            doctorInfoContainer.querySelector('h3').textContent = 'Ваш врач: ' + doctor.full_name;
-            doctorInfoContainer.querySelector('#doctor-specialization').textContent = 'Специализация: ' + doctor.position;
-            doctorInfoContainer.querySelector('#doctor-email').textContent = 'Email: ' + doctor.email;
-            doctorInfoContainer.querySelector('#doctor-phone').textContent = 'Телефон: ' + doctor.phone_number;
-            var doctorImage = doctorInfoContainer.querySelector('#doctor-image');
+      function updateDoctorInfoOnPage(doctor) {
+    var doctorInfoContainer = document.getElementById('doctor-info');
+    doctorInfoContainer.querySelector('#doctor-name').textContent = doctor.full_name;
+    doctorInfoContainer.querySelector('#doctor-specialization').textContent = doctor.position;
+    doctorInfoContainer.querySelector('#doctor-email').textContent = doctor.email;
+    doctorInfoContainer.querySelector('#doctor-phone').textContent = doctor.phone_number;
+    var doctorImage = doctorInfoContainer.querySelector('#doctor-image');
     doctorImage.src = doctor.image_url || '';
-    
-        }
+}
+        
     </script>
 
 {% endblock %}
