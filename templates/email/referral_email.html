@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ваше направление</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <img src="https://drive.google.com/uc?export=view&id=1KgjEW8oBi1l8Knxo56vG8jmg38TU1cKf" alt="Логотип" width="200">
+        <h2>Ваше направление</h2>
+        <p>Уважаемый(ая) {{ patient.first_name }} {{ patient.last_name }},</p>
+        <p>Ваш врач {{ doctor.full_name }} выписал направление. Пожалуйста, найдите прикрепленный файл для деталей.</p>
+        <p>С уважением, ваша клиника: {{ patient.attach.organization.name }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ваш рецепт</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+        }
+        .content {
+            margin: 20px;
+        }
+        .logo {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://drive.google.com/uc?id=1KgjEW8oBi1l8Knxo56vG8jmg38TU1cKf" alt="Логотип клиники" class="logo">
+            <h1>Ваш рецепт</h1>
+        </div>
+        <div class="content">
+            <p>Уважаемый(ая) {{ patient.first_name }} {{ patient.last_name }},</p>
+            <p>Ваш врач {{ doctor.full_name }} выписал вам рецепт. Пожалуйста, ознакомьтесь с приложенным файлом.</p>
+            <p>С уважением, ваша клиника: {{ patient.attach.organization.name }}</p>
+        </div>
+    </div>
+</body>
+</html>
+

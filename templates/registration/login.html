@@ -520,43 +520,8 @@ input:checked + .slider .off
         <li class="tab" onclick="document.getElementById('switch').style.display = 'none'; document.getElementById('switch-info').style.display = 'none';"><a href="?tab=signup" class="tab signup">Регистрация</a></li>
         <li class="tab" onclick="document.getElementById('switch').style.display = 'block'; document.getElementById('switch-info').style.display = 'block';"><a href="?tab=login" class="tab login">Войти</a></li>
     </ul>
-<label class="switch" id="switch" style="display: none;">
- <input type="checkbox" id="togBtn">
- <div class="slider round">
-  <span class="on">ON</span>
-  <span class="off">OFF</span>
- </div>
-</label>
-<label id="switch-info" style="display: none; margin-top: 0; margin-bottom: 5px;">
-    <div>
-         <p style="display: inline-block; margin-top: 4px; font-size: 17px; vertical-align: middle; color: #e0e0e0">Войти как врач</p>
-    </div>
-</label>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-    
-    // Получаем текущий URL страницы
-    var currentPageUrl = window.location.href;
-    
-    // Получаем элемент, который нужно скрыть/показать в зависимости от состояния переключателя
-    var switchElement = document.getElementById('switch');
-    var switElement = document.getElementById('switch-info');
-    // Проверяем, находимся ли мы на странице входа или на странице регистрации
-    if (currentPageUrl.includes('tab=login')) {
 
-        // Показываем элемент
-        switchElement.style.display = 'block';
-        switElement.style.display='block'
-    } else if (currentPageUrl.includes('tab=signup')) {
-
-        // Скрываем элемент
-        switchElement.style.display = 'none';
-        switElement.style.display='none'
-    }
-});
-
-</script>
 
     <div id="signup" class="tab-content">
     <form id="signup-form" action="{% url 'login-signup' %}" method="post" enctype="multipart/form-data">
@@ -602,31 +567,59 @@ input:checked + .slider .off
         <button type="submit" name="action" value="register" class="button button-block">Начать</button>
     </form>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('login-form');
+    const toggleSwitch = document.getElementById('togBtn');
+
+    loginForm.addEventListener('submit', function (event) {
+        const isDoctorLogin = toggleSwitch.checked;
+        const doctorLoginInput = document.createElement('input');
+        doctorLoginInput.setAttribute('type', 'hidden');
+        doctorLoginInput.setAttribute('name', 'is_doctor');
+        doctorLoginInput.setAttribute('value', isDoctorLogin ? 'true' : 'false');
+        loginForm.appendChild(doctorLoginInput);
+    });
+});
+</script>
+
+<div id="login" class="tab-content">
+    <form id="login-form" method="post" action="{% url 'login-signup' %}">
+        {% csrf_token %}
+        <h1>Добро пожаловать!</h1>
+        <div class="field-wrap">
+            <label for="login-iin">ИИН номер<span class="req">*</span></label>
+            <input type="text" id="login-iin" name="iin" required autocomplete="off"/>
+        </div>
+        <div class="field-wrap">
+            <label for="login-password">Пароль<span class="req">*</span></label>
+            <input type="password" id="login-password" name="password" required autocomplete="off"/>
+        </div>
+        <label class="switch" id="switch">
+            <input type="checkbox" id="togBtn">
+            <div class="slider round">
+                <span class="on">ON</span>
+                <span class="off">OFF</span>
+            </div>
+        </label>
+        <label id="switch-info">
+            <div>
+                <p style="display: inline-block; margin-top: 4px; font-size: 17px; vertical-align: middle; color: #e0e0e0">Войти как врач</p>
+            </div>
+        </label>
+        <div class="field-wrap">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <p class="forgot"><a href="#" id="FaceID">Войти по face id</a><a href="#" id="forgotPasswordLink" style="margin-left: 25px;">Забыли пароль?</a></p>
+        <button type="submit" name="action" value="login" class="button button-block">Войти</button>
+    </form>
+</div>
 
 
-    <div id="login" class="tab-content">
-        <form id="login-form" method="post" action="{% url 'login-signup' %}">
-            {% csrf_token %}
-            <h1>Добро пожаловать!</h1>
-            <div class="field-wrap">
-                <label for="login-iin">ИИН номер<span class="req">*</span></label>
-                <input type="text" id="login-iin" name="iin" required autocomplete="off"/>
-            </div>
-            <div class="field-wrap">
-                <label for="login-password">Пароль<span class="req">*</span></label>
-                <input type="password" id="login-password" name="password" required autocomplete="off"/>
-            </div>
-            <div class="field-wrap">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="message {{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <p class="forgot"><a href="#" id="FaceID">Войти по face id</a><a href="#" id="forgotPasswordLink" style="margin-left: 25px;">Забыли пароль?</a></p>
-            <button type="submit" name="action" value="login" class="button button-block">Войти</button>
-        </form>
-    </div>
 <div id="message-container">
 {% for message in messages %}
     {% if 'success' in message.tags %}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Запись на прием</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .content {
+            margin: 20px;
+        }
+        .logo {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://drive.google.com/uc?id=1KgjEW8oBi1l8Knxo56vG8jmg38TU1cKf" alt="Логотип клиники" class="logo">
+            <h1>Запись на прием</h1>
+        </div>
+        <div class="content">
+            <p>Уважаемый(ая) {{ patient.first_name }} {{ patient.last_name }},</p>
+            <p>Вы записаны на прием к врачу {{ doctor.full_name }} на {{ date_time }}.</p>
+            <p>Если у вас возникли вопросы или вам нужно перенести прием, пожалуйста, свяжитесь с нами.</p>
+            <p>С уважением, ваша клиника</p>
+        </div>
+    </div>
+</body>
+</html>
+

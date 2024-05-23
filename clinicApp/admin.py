@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import Patient
+from .models import Patient, Slide
+
 
 class CustomPatientAdmin(UserAdmin):
     model = Patient
@@ -96,3 +97,8 @@ class DoctorAdmin(admin.ModelAdmin):
             return f"{obj.patient.first_name} {obj.patient.last_name}"
 
         get_full_name.short_description = 'Patient'
+
+
+@admin.register(Slide)
+class SlideAdmin(admin.ModelAdmin):
+    list_display = ('title', 'description', 'image')

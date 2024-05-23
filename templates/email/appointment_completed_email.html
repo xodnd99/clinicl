@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Прием завершен</title>
+    <style>
+        .email-container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+        }
+        .content {
+            margin: 20px;
+        }
+        .logo {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://drive.google.com/uc?id=1KgjEW8oBi1l8Knxo56vG8jmg38TU1cKf" alt="Логотип клиники" class="logo">
+            <h1>Прием завершен</h1>
+        </div>
+        <div class="content">
+            <p>Уважаемый(ая) {{ patient.first_name }} {{ patient.last_name }},</p>
+            <p>Ваш прием у врача {{ doctor.full_name }} завершен. Мы надеемся, что ваш визит прошел успешно.</p>
+            <p>Если у вас есть вопросы или вам нужно дополнительное разъяснение, пожалуйста, свяжитесь с нами.</p>
+            <p>С уважением, ваша клиника: {{ patient.attach.organization.name }}</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

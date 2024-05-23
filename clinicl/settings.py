@@ -28,6 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+AUTHENTICATION_BACKENDS = [
+    'clinicApp.backends.PatientBackend',
+    'clinicApp.backends.DoctorBackend',
+]
+
 
 AUTH_USER_MODEL = 'clinicApp.Patient'
 
@@ -44,6 +49,16 @@ INSTALLED_APPS = [
     'sslserver',
     'clinicApp',
 ]
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'qaz123',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,22 +89,9 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'clinicl.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'qaz123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

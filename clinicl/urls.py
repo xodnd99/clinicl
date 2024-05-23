@@ -5,11 +5,11 @@ from django.conf.urls.static import static
 from clinicApp import views
 from .views import HomeView
 from django.contrib.auth import views as auth_views
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
+    path('doctor-profile/', views.doctor_profile_link, name='doctor-profile-link'),
+    path('doctor-home/', views.doctor_home, name='doctor-home'),
     path('login-signup/', views.login_signup_view, name='login-signup'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('save_user_info/', views.save_user_info, name='save_user_info'),
@@ -28,8 +28,14 @@ urlpatterns = [
     path('create_appointment/', views.create_appointment, name='create_appointment'),
     path('medical_history/', views.medical_history, name='medical_history'),
     path('cancel-appointment/<int:appointment_id>', views.cancel_appointment, name='cancel-appointment'),
-
+    path('save_comment/', views.save_comment, name='save_comment'),
+    path('detach_patient/<str:iin>/', views.detach_patient, name='detach_patient'),
+    path('create_prescription/', views.create_prescription, name='create_prescription'),
+    path('get_prescriptions/', views.get_prescriptions, name='get_prescriptions'),
+    path('download_prescription/<int:prescription_id>/', views.download_prescription_pdf, name='download_prescription'),
+    path('create_appointment_first/', views.create_appointment_first, name='create_appointment_first'),
+    path('create_referral/', views.create_referral, name='create_referral'),
+    path('get_referrals/', views.get_referrals, name='get_referrals'),
 ]
-
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

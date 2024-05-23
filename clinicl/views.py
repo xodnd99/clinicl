@@ -1,7 +1,8 @@
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from clinicApp.models import Slide
+from clinicApp.models import Slide, Doctor
+
 class HomeView(TemplateView):
-    slides = Slide.objects.all()
     template_name = 'html/index.html'
 
     def get_context_data(self, **kwargs):
@@ -9,6 +10,10 @@ class HomeView(TemplateView):
         user = self.request.user
         context['slides'] = Slide.objects.all()
         context['user'] = user
+        context['is_doctor'] = Doctor.objects.filter(iin=Doctor.iin).exists()  # Добавьте это
         return context
+
+
+
 
 

@@ -6,21 +6,25 @@ from django.urls import reverse
 from django.utils.dateparse import parse_date, parse_datetime
 from django.views.decorators.http import require_POST
 from .models import PatientDetail
-
-
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from .models import Patient, Doctor
 
 def login_signup_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')
+        is_doctor = request.POST.get('is_doctor') == 'true'
 
         if action == 'register':
+            # Registration logic for patients (assuming doctors cannot self-register)
             email = request.POST.get('email')
             iin = request.POST.get('iin')
             password = request.POST.get('password')
             first_name = request.POST.get('first_name', '')
             last_name = request.POST.get('last_name', '')
             image_data = request.POST.get('capturedImage', None)
-            photo = None  # Значение по умолчанию, если изображение не предоставлено
+            photo = None
 
             if image_data:
                 format, imgstr = image_data.split(';base64,')
@@ -49,21 +53,36 @@ def login_signup_view(request):
                 messages.error(request, 'ИИН должен состоять ровно из 12 цифр')
                 return redirect(reverse('login-signup') + '?tab=login')
 
-            user = authenticate(request, username=iin, password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, 'Вход успешно выполнен!')
+            if is_doctor:
+                user = authenticate(request, username=iin, password=password, backend='clinicApp.backends.DoctorBackend')
+                if user is not None:
+                    login(request, user, backend='clinicApp.backends.DoctorBackend')
+                    return redirect('doctor-home')
+                else:
+                    messages.error(request, 'Неверный ИИН или пароль')
+                    return redirect(reverse('login-signup') + '?tab=login')
             else:
-                messages.error(request, 'Неверный ИИН или пароль')
-                return redirect(reverse('login-signup') + '?tab=login')
+                user = authenticate(request, username=iin, password=password, backend='clinicApp.backends.PatientBackend')
+                if user is not None:
+                    login(request, user, backend='clinicApp.backends.PatientBackend')
+                    messages.success(request, 'Вход успешно выполнен!')
+                    return redirect('home')
+                else:
+                    messages.error(request, 'Неверный ИИН или пароль')
+                    return redirect(reverse('login-signup') + '?tab=login')
 
     return render(request, 'registration/login.html', {
         'tab': 'signup' if request.GET.get('tab') == 'signup' else 'login'
     })
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def doctor_home(request):
+    return render(request, 'html/doctor-index.html')
 
 
-# views.py
+
 
 from django.http import JsonResponse
 from .utils import classify_face  # Ensure this is pointing to the correct utility function
@@ -85,7 +104,7 @@ def find_user_view(request):
         if patient_iin:
             patient = Patient.objects.filter(iin=patient_iin).first()
             if patient:
-                login(request, patient)
+                login(request, patient, backend='clinicApp.backends.PatientBackend')
                 return JsonResponse({'success': True})
             else:
                 return JsonResponse({'error': 'Аутентификация не удалась. Пожалуйста, повторите попытку!'}, status=401)
@@ -93,6 +112,7 @@ def find_user_view(request):
             return JsonResponse({'error': 'Лицо не распознано. Пожалуйста, войдите другим способом или повторите попытку!'}, status=400)
 
     return JsonResponse({'error': 'Неверный запрос. Пожалуйста, повторите попытку!'}, status=400)
+
 
 
 
@@ -589,3 +609,265 @@ from .models import Slide
 def home(request):
     slides = Slide.objects.all()
     return render(request, 'html/index.html', {'slides': slides})
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Appointment
+
+
+@login_required
+def doctor_home(request):
+    doctor = request.user  # Assuming the user is already authenticated as a doctor
+    clinic = doctor.clinic
+    phone_numbers = clinic.phone_numbers.split(", ") if clinic.phone_numbers else []
+
+    # Get the list of patients attached to the doctor
+    attachments = doctor.patient_attachments.filter(active=True)
+    patients = [attachment.patient for attachment in attachments]
+    slides = Slide.objects.all()
+    # Get all appointments for the doctor
+    appointments = Appointment.objects.filter(doctor=doctor).order_by('-date_time')
+
+    context = {
+        'clinic': clinic,
+        'phone_numbers': phone_numbers,
+        'patients': patients,
+        'appointments': appointments,
+        'slides': slides,
+        'doctor': doctor,
+        'working_days': doctor.working_days,  # Add this line
+    }
+    return render(request, 'html/doctor-index.html', context)
+
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import Appointment
+
+@csrf_exempt
+def save_comment(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        appointment_id = data.get('appointment_id')
+        comment = data.get('comment')
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+            appointment.comments = comment
+            appointment.status = 'completed'  # Update the status to completed
+            appointment.save()
+            return JsonResponse({'success': True})
+        except Appointment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Appointment not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from .models import Patient, Attachment
+
+@csrf_exempt
+def detach_patient(request, iin):
+    if request.method == 'POST':
+        try:
+            patient = Patient.objects.get(iin=iin)
+            attachments = Attachment.objects.filter(patient=patient)
+            attachments.update(active=False)  # Деактивировать все прикрепления пациента
+            return JsonResponse({'success': True})
+        except Patient.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Пациент не найден'})
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
+
+
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Prescription, Doctor, Patient
+import json
+
+@csrf_exempt
+def create_prescription(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        patient_iin = request.POST.get('patient_iin')
+        pdf_file = request.FILES.get('pdf')
+        doctor = request.user  # Assuming the user is already authenticated as a doctor
+
+        try:
+            patient = Patient.objects.get(iin=patient_iin)
+            prescription = Prescription.objects.create(
+                category=category,
+                doctor=doctor,
+                patient=patient,
+                pdf_file=pdf_file
+            )
+            return JsonResponse({'success': True, 'prescription_id': prescription.id})
+        except Patient.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Пациент не найден'})
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
+
+
+from django.core.paginator import Paginator
+from django.http import JsonResponse, FileResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Prescription
+
+
+@csrf_exempt
+def get_prescriptions(request):
+    if request.method == 'GET':
+        doctor = request.user  # Assuming the user is already authenticated as a doctor
+        page_number = request.GET.get('page', 1)
+        prescriptions = Prescription.objects.filter(doctor=doctor).order_by('-created_at')
+        paginator = Paginator(prescriptions, 10)  # 10 рецептов на страницу
+        page_obj = paginator.get_page(page_number)
+
+        prescriptions_data = [
+            {
+                'id': pres.id,
+                'category': pres.category,
+                'patient_name': f'{pres.patient.first_name} {pres.patient.last_name}',
+                'created_at': pres.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'pdf_url': pres.pdf_file.url if pres.pdf_file else ''
+            }
+            for pres in page_obj
+        ]
+
+        return JsonResponse({
+            'success': True,
+            'prescriptions': prescriptions_data,
+            'page_number': page_obj.number,
+            'num_pages': paginator.num_pages
+        })
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
+
+
+def download_prescription_pdf(request, prescription_id):
+    try:
+        prescription = Prescription.objects.get(id=prescription_id)
+        response = FileResponse(prescription.pdf_file.open('rb'), as_attachment=True,
+                                filename=f'prescription_{prescription_id}.pdf')
+        return response
+    except Prescription.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Рецепт не найден'})
+
+
+# views.py
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Appointment, Patient, Doctor
+import json
+
+@csrf_exempt
+def create_appointment_first(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        patient_iin = data.get('patient_iin')
+        date_time = data.get('date_time')
+
+        try:
+            patient = get_object_or_404(Patient, iin=patient_iin)
+            doctor = request.user  # Assuming the user is already authenticated as a doctor
+            organization = doctor.clinic
+
+            appointment = Appointment.objects.create(
+                patient=patient,
+                doctor=doctor,
+                organization=organization,
+                date_time=date_time,
+                status='scheduled'
+            )
+            return JsonResponse({'success': True, 'appointment_id': appointment.id})
+        except Patient.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Пациент не найден'})
+    return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Referral
+from .utils import send_referral_email
+
+def create_referral(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        purpose = request.POST.get('purpose')
+        details = request.POST.get('details')
+        patient_iin = request.POST.get('patient_iin')
+        doctor = request.user  # Assuming the logged in user is the doctor
+
+        # Найти пациента по IIN
+        patient = Patient.objects.get(iin=patient_iin)
+
+        # Создать и сохранить PDF файл
+        pdf_file = request.FILES.get('pdf')
+
+        # Создать запись направления
+        referral = Referral.objects.create(
+            patient=patient,
+            doctor=doctor,
+            category=category,
+            purpose=purpose,
+            details=details,
+            pdf_file=pdf_file
+        )
+
+        # Отправить email с направлением
+        send_referral_email(patient, doctor, referral.pdf_file.path)
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from .models import Referral
+
+
+def get_referrals(request):
+    page = int(request.GET.get('page', 1))
+    search_query = request.GET.get('search_query', '')
+
+    doctor = request.user  # Ensure the user is a doctor
+    referrals = Referral.objects.filter(doctor=doctor)
+
+    if search_query:
+        referrals = referrals.filter(
+            patient__iin__icontains(search_query) |
+            patient__first_name__icontains(search_query) |
+            patient__last_name__icontains(search_query)
+        )
+
+    paginator = Paginator(referrals.order_by('-created_at'), 10)  # 10 referrals per page
+    referrals_page = paginator.get_page(page)
+
+    referrals_list = [
+        {
+            'category': referral.get_category_display(),
+            'purpose': referral.get_purpose_display(),
+            'patient_name': f"{referral.patient.first_name} {referral.patient.last_name}",
+            'patient_iin': referral.patient.iin,
+            'created_at': referral.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'pdf_url': referral.pdf_file.url if referral.pdf_file else '',
+        } for referral in referrals_page
+    ]
+
+    data = {
+        'referrals': referrals_list,
+        'page_number': page,
+        'num_pages': paginator.num_pages,
+        'success': True,
+    }
+
+    return JsonResponse(data)
+
+
+
+def doctor_profile_link(request):
+
+    return render(request, 'html/doctor_profile.html')

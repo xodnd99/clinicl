@@ -74,3 +74,56 @@ def classify_face(img):
     except:
         # If no faces are found in the input image or an error occurs, return False
         return False
+
+
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.conf import settings
+
+def send_email(subject, message, recipient_list, attachment=None):
+    email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+    email.content_subtype = "html"  # Set the email content to HTML
+    if attachment:
+        email.attach_file(attachment)
+    email.send()
+
+def send_prescription_email(patient, doctor, pdf_path):
+    subject = 'Ваш рецепт'
+    message = render_to_string('email/prescription_email.html', {
+        'patient': patient,
+        'doctor': doctor,
+    })
+    send_email(subject, message, [patient.email], attachment=pdf_path)
+
+def send_detach_email(patient, doctor):
+    subject = 'Открепление от врача'
+    message = render_to_string('email/detach_email.html', {
+        'patient': patient,
+        'doctor': doctor,
+    })
+    send_email(subject, message, [patient.email])
+
+def send_appointment_email(patient, doctor, date_time):
+    subject = 'Запись на прием'
+    message = render_to_string('email/appointment_email.html', {
+        'patient': patient,
+        'doctor': doctor,
+        'date_time': date_time,
+    })
+    send_email(subject, message, [patient.email])
+
+def send_appointment_completed_email(patient, doctor):
+    subject = 'Прием завершен'
+    message = render_to_string('email/appointment_completed_email.html', {
+        'patient': patient,
+        'doctor': doctor,
+    })
+    send_email(subject, message, [patient.email])
+
+def send_referral_email(patient, doctor, pdf_path):
+    subject = 'Ваше направление'
+    message = render_to_string('email/referral_email.html', {
+        'patient': patient,
+        'doctor': doctor,
+    })
+    send_email(subject, message, [patient.email], attachment=pdf_path)

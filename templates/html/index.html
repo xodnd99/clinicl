@@ -446,8 +446,8 @@ nav ul li:last-child {
     width: 100%; /* Полная ширина */
     height: 100%; /* Полная высота */
     overflow: auto; /* Включите прокрутку, если нужно */
-    background-color: rgb(0,0,0); /* Цвет фона */
-    background-color: rgba(0,0,0,0.8); /* Черный с непрозрачностью */
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
     z-index: 1000; /* Убедитесь, что модальное окно находится над другими элементами */
     }
 
@@ -707,9 +707,15 @@ nav ul li:last-child {
     <div class="button-container">
         {% if user.is_authenticated %}
             <div class="user-menu" onclick="toggleMenu()" onmouseleave="closeMenu()">
-                <span class="user-name" style="font-size: 20px;"><i class="fas fa-user"></i> {{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
+                <span class="user-name" style="font-size: 20px;"><i class="fas fa-user">
+                    
+                </i> {{ user.full_name }} {{ user.first_name }} {{ user.last_name }}: {{ user.iin }}</span>
                 <div id="dropdown" class="dropdown-content">
+                   {% if user.is_doctor %}
+                    <a href="{% url 'doctor-profile-link' %}"><i class="fas fa-user-circle"></i> Личный кабинет</a>
+                {% else %}
                     <a href="{% url 'profile_link' %}"><i class="fas fa-user-circle"></i> Личный кабинет</a>
+                {% endif %}
                     <a href="#notifications"><i class="fas fa-bell"></i> Уведомления </a>
                     <form action="{% url 'logout' %}" method="post" id="logout-form" style="display:none;">
                         {% csrf_token %}
@@ -723,7 +729,7 @@ nav ul li:last-child {
             <a href="{% url 'login-signup' %}?tab=login" class="tab login">Войти</a>
             <a href="{% url 'login-signup' %}?tab=signup" class="tab signup">Регистрация</a>
         {% endif %}
-    </div> 
+    </div>
 </div>
 <div class="top-panel-first">
     <div class="footer-links">
@@ -1135,10 +1141,10 @@ window.onclick = function(event) {
 }
     </script>
     </div>
-<div class="news-tips-slider">
+<div class="news-tips-slider" style="cursor: pointer;">
     {% for slide in slides %}
     <div class="slide-container">
-        <div class="slide" style="background-image: url('{{ slide.image.url }}');">
+        <div class="slide" style="background-image: url('{{ slide.image.url }}');" onclick="window.open('{{ slide.source }}', '_blank');">
             <div class="slide-content">
                 <h2 style="color: #07f1ae">{{ slide.title }}</h2>
                 <p>{{ slide.description }}</p>
