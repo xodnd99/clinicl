@@ -10,6 +10,8 @@ Attention: Для корректной работы вам нужна устан
 4-установка и настройка БД Postgresql для установки выполните след команды sudo apt update sudo apt install postgresql, запустите БД по команде sudo systemctl start postgresql 
 Потом войдите в интерактивную среду БД по команде sudo -u postgres psql, установите пароль для пользвателя postgres по команде ALTER USER postgres WITH PASSWORD 'qaz123'; 
 p.s пароль желательно не менять, иначе придется переконфигурировать подключение БД в файле settings.py
+
+
 ![image](https://github.com/user-attachments/assets/8f164549-0376-4da4-a5fd-652ba1d06166)
 
  
