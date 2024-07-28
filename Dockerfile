@@ -13,13 +13,8 @@ WORKDIR /app
 # Копируем файлы проекта
 COPY . /app
 
-# Создаем и активируем виртуальное окружение
-RUN python -m venv venv
-RUN . venv/bin/activate
+RUN /bin/bash -c "source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
 
-# Устанавливаем зависимости Python
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
 
 # Применяем миграции
 RUN python manage.py makemigrations clinicApp
