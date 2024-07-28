@@ -1,12 +1,8 @@
 # Используем базовый образ Python
-FROM python:3.12-slim
+FROM python:3.12
 
-# Устанавливаем зависимости системы
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    cmake \
-    postgresql-client
+# Устанавливаем зависимости для CMake
+RUN apt-get update && apt-get install -y cmake
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -15,15 +11,16 @@ WORKDIR /app
 COPY . /app
 
 # Активируем виртуальное окружение и устанавливаем зависимости
-RUN /bin/bash -c "source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
-
-# Устанавливаем дополнительный пакет для пагинации
-RUN /bin/bash -c "source venv/bin/activate && pip install django-paginate"
+RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
 
 # Применяем миграции
-RUN /bin/bash -c "source venv/bin/activate && python manage.py makemigrations clinicApp"
-RUN /bin/bash -c "source venv/bin/activate && python manage.py migrate"
+RUN . venv/bin/activate && python manage.py makemigrations clinicApp && python manage.py migrate
 
-# Команда для запуска сервера Django
-CMD ["/bin/bash", "-c", "source venv/bin/activate && python manage.py runserver 0.0.0.0:8000"]
+# Открываем порт 8000
+EXPOSE 8000
+
+# Команда для запуска сервера
+CMD ["sh", "-c", ". venv/bin/activate && python manage.py runserver 0.0.0.0:8000"]
+
+
 
