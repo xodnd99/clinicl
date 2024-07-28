@@ -36,6 +36,12 @@ urlpatterns = [
     path('create_appointment_first/', views.create_appointment_first, name='create_appointment_first'),
     path('create_referral/', views.create_referral, name='create_referral'),
     path('get_referrals/', views.get_referrals, name='get_referrals'),
+    path('referrals/', views.referrals, name='referrals'),
+    path('prescriptions/', views.prescriptions_view, name='prescriptions'),
+    path('create_test_result/', views.create_test_result, name='create_test_result'),
+    path('get_test_results/', views.get_test_results, name='get_test_results'),
+    path('patient/test-results/', views.patient_test_results, name='patient_test_results'),
+
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

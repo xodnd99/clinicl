@@ -1,3 +1,4 @@
+import paginate
 import pytz
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -871,3 +872,123 @@ def get_referrals(request):
 def doctor_profile_link(request):
 
     return render(request, 'html/doctor_profile.html')
+
+# clinicApp/views.py
+
+from django.shortcuts import render
+from .models import Referral
+
+def referrals(request):
+    user = request.user
+    if user.is_authenticated:
+        patient_referrals = Referral.objects.filter(patient=user)
+        return render(request, 'html/referrals.html', {'referrals': patient_referrals})
+    else:
+        return redirect('login')  # Перенаправление на страницу входа, если пользователь не авторизован
+
+from django.shortcuts import render
+from .models import Prescription
+
+def prescriptions_view(request):
+    # Предполагаем, что у вас есть механизм аутентификации и идентификации пользователя
+    patient = request.user  # Получаем объект пациента из текущего пользователя
+    prescriptions = Prescription.objects.filter(patient=patient)
+
+    context = {
+        'prescriptions': prescriptions,
+    }
+    return render(request, 'html/prescriptions.html', context)
+
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import TestResult, Patient, Doctor
+
+
+@login_required
+@csrf_exempt
+def create_test_result(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        details = request.POST.get('details')
+        patient_iin = request.POST.get('patient_iin')
+        pdf_file = request.FILES.get('pdf_file')
+
+        try:
+            patient = Patient.objects.get(iin=patient_iin)
+        except Patient.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Пациент не найден'})
+
+        doctor = request.user  # Предполагаем, что request.user уже является объектом Doctor
+
+        test_result = TestResult.objects.create(
+            category=category,
+            details=details,
+            patient=patient,
+            pdf_file=pdf_file,
+            doctor=doctor
+        )
+
+        return JsonResponse({'success': True, 'message': 'Результат анализа успешно создан.'})
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
+
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
+from .models import TestResult
+
+def get_test_results(request):
+    page = request.GET.get('page', 1)
+    search_query = request.GET.get('search_query', '')
+
+    # Фильтрация результатов тестов
+    test_results = TestResult.objects.filter(patient__iin__icontains=search_query).order_by('created_at')
+
+    # Пагинация
+    paginator = Paginator(test_results, 10)  # Показывать по 10 результатов на странице
+
+    try:
+        test_results = paginator.page(page)
+    except PageNotAnInteger:
+        test_results = paginator.page(1)
+    except EmptyPage:
+        test_results = paginator.page(paginator.num_pages)
+
+    data = {
+        'success': True,
+        'test_results': [
+            {
+                'category': result.get_category_display(),
+                'patient_name': f'{result.patient.first_name} {result.patient.last_name}',
+                'patient_iin': result.patient.iin,
+                'created_at': result.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'pdf_url': result.pdf_file.url if result.pdf_file else None
+            }
+            for result in test_results
+        ],
+        'page_number': test_results.number,
+        'num_pages': paginator.num_pages
+    }
+
+    return JsonResponse(data)
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import TestResult
+
+@login_required
+def patient_test_results(request):
+    patient = request.user # Assuming `request.user` is a Patient
+    test_results = TestResult.objects.filter(patient=patient).order_by('-created_at')
+    context = {
+        'patient': patient,
+        'test_results': test_results,
+    }
+    return render(request, 'html/patient_test_results.html', context)
+
+
+
+

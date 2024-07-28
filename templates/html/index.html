@@ -1008,9 +1008,9 @@ window.onclick = function(event) {
   <ul>
     <li><a href="#"><i class="fas fa-home"></i> На главную</a></li>
        <li><a href="{% url 'appoint_doctor' %}"><i class="fas fa-solid fa-stethoscope"></i> Запись к врачу</a></li>
-    <li><a href="#"><i class="fas fa-directions"></i>Активные направления</a></li>
+    <li><a href="{% url 'referrals' %}"><i class="fas fa-directions"></i>Активные направления</a></li>
     <li><a href="#"><i class="fas fa-vial"></i> Анализы</a></li>
-    <li><a href="#"><i class="fas fa-notes-medical"></i> Платежи и статус ОСМС</a></li>
+    <li><a href="{% url 'prescriptions' %}"><i class="fas fa-notes-medical"></i> Ваши рецепты</a></li>
     <li><a href="{% url 'medical_history' %}"><i class="fas fa-book-medical"></i> Медицинская история</a></li>
       <li><a href='https://i-teka.kz/almaty/medicamentsalphabetically' target="_blank"><i class="fas fa-duotone fa-pills"></i> Поиск лекарств</a></li>
   </ul>
@@ -1057,7 +1057,7 @@ window.onclick = function(event) {
     </svg>
   </div>
 </div>
-    <div id="attach" style="background-color: #018c65" onclick="requireLogin('attach-page')">
+    <div id="attach" style="background-color: #018c65" onclick="requireLogin('{% url 'patient_test_results' %}')">
   <div class="text-and-image">
     <img src="/media/preview.png" style="width: 350px; height: 200px;"> <!-- Replace with your image path -->
     <p style="font-size: 25px;">Быстро и легко: проверьте анализы онлайн</p>
@@ -1098,7 +1098,7 @@ window.onclick = function(event) {
 </div>
     </div>
         <div class="display-flex-colm" style="display: flex">
-<div id="attach" onclick="requireLogin('attach-page')">
+<div id="attach" onclick="requireLogin('{% url 'referrals' %}')">
   <div class="text-and-image">
     <img src="/media/img_1.png" style="width: 320px; height: 220px;"> <!-- Replace with your image path -->
     <p style="font-size: 25px;">Управляйте своими медицинскими направлениями легко и удобно</p>
@@ -1110,10 +1110,10 @@ window.onclick = function(event) {
     </svg>
   </div>
 </div>
-    <div id="attach" onclick="requireLogin('attach-page')" style="background-color: #018c65">
+    <div id="attach" onclick="requireLogin('prescriptions')" style="background-color: #018c65">
   <div class="text-and-image">
-    <img src="/media/img_2.png" style="width: 320px; height: 200px;"> <!-- Replace with your image path -->
-    <p style="font-size: 25px;">Проверьте вашу медицинскую страховку за мгновение</p>
+    <img src="/media/image-removebg-preview.png" style="width: 320px; height: 200px;"> <!-- Replace with your image path -->
+    <p style="font-size: 25px;">Получите онлайн доступ к вашим рецептам лекарств</p>
   </div>
   <div class="arrow-wrapper">
     <svg class="arrow-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">

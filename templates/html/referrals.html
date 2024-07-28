@@ -1,0 +1,114 @@
+{% extends "html/index.html" %}
+
+{% block extra_styles %}
+
+    #referral-form-container {
+        background: rgba(19, 35, 47, 0.9);
+            padding: 10px;
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+            font-size: 25px;
+            color: white;
+            position: relative;
+            border: 1.5px solid #0b520e;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    #referral-form-container i {
+         position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 30px;
+            font-weight: bolder;
+    }
+    #referral-form-container i:hover {
+        color: lawngreen;
+        font-size: 38px;
+    }
+    #referral-form-container label {
+        font-size: 17px;
+    }
+    .checkmark {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #4CAF50;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #4CAF50;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #4CAF50;
+        fill: #fff;
+        animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
+    }
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+    @keyframes scale {
+        0%, 100% {
+            transform: none;
+        }
+        50% {
+            transform: scale3d(1.1, 1.1, 1);
+        }
+    }
+    @keyframes fill {
+        100% {
+            box-shadow: inset 0px 0px 0px 30px #4CAF50;
+        }
+    }
+    h1 {
+        font-size: 1.5rem; /* Уменьшаем размер шрифта */
+    }
+
+{% endblock %}
+
+{% block title %}Ваши направления{% endblock %}
+
+{% block content %}
+<div id="referral-form-container" class="form">
+    <i id="user-info-icon" class="far fa-window-close" onclick="redirectToHome()"></i>
+
+    <h3 style="color: white; text-align: center; font-size: 25px; margin-top: 20px;">Список ваших направлений</h3>
+    <ul id="referral-list" style="list-style-type: none; padding: 0; color: white;">
+        {% for referral in referrals %}
+        <li style="padding: 10px; background-color: #192836; margin-bottom: 10px; border-radius: 5px;">
+            <h4>Категория: {{ referral.get_category_display }}</h4>
+            <p>Цель: {{ referral.get_purpose_display }}</p>
+            <p>Подробности: {{ referral.details }}</p>
+            <p>Дата создания: {{ referral.created_at }}</p>
+            {% if referral.pdf_file %}
+            <p><a href="{{ referral.pdf_file.url }}" style="color: #4CAF50;">Скачать PDF</a></p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function redirectToHome() {
+    window.location.href = '/'; // Путь к вашей главной странице
+}
+</script>
+{% endblock scripts %}

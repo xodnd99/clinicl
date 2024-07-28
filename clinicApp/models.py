@@ -238,3 +238,26 @@ class Referral(models.Model):
         return f"Referral for {self.patient} by {self.doctor} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
 
 
+# models.py
+
+from django.db import models
+
+class TestResult(models.Model):
+    CATEGORY_CHOICES = [
+        ('blood_test', 'Анализ крови'),
+        ('urine_test', 'Анализ мочи'),
+        ('radiology', 'Диагностика (лучевая)'),
+        ('ultrasound', 'УЗИ'),
+        ('mri', 'МРТ'),
+        ('other', 'Другое'),
+    ]
+
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, related_name='test_results')
+    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='test_results')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    details = models.TextField()
+    pdf_file = models.FileField(upload_to='test_results/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Test Result for {self.patient} by {self.doctor} on {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"

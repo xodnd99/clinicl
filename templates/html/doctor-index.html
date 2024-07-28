@@ -630,8 +630,8 @@
     <p>Ваши рецепты</p>
 </div>
 
-        <div class="icon-box">
-            <i class="fas fa-vials" style="font-size: 60px"></i>
+        <div class="icon-box" onclick="openModal('testResultsModalFirst')">
+            <i class="fas fa-vials" style="font-size: 60px" ></i>
             <p>Ваши анализы</p>
         </div>
     </div>
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <button onclick="detachPatient('{{ patient.iin }}')">Открепить</button>
             <button onclick="openPrescriptionModal('{{ patient.iin }}')">Выписать рецепт</button>
             <button onclick="openAppointmentModalFirst('{{ patient.iin }}')">Записать на прием</button>
-            <button onclick="uploadResults('{{ patient.iin }}')">Загрузить результаты анализов</button>
+            <button onclick="openTestResultModal('{{ patient.iin }}')">Загрузить результаты анализов</button>
                         <button onclick="referPatient('{{ patient.iin }}')">Выписать направление</button>
 
         </div>
@@ -916,6 +916,49 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 </div>
 
+<div id="testResultModal" class="modal">
+    <div class="modal-content">
+        <i id="close-modal" class="far fa-window-close" onclick="closeModal('testResultModal')"></i>
+        <h2>Создать результат анализа</h2>
+        <form id="test-result-form" action="{% url 'create_test_result' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="category">Категория анализа:</label>
+            <select id="category" name="category" required style="background-color: rgba(19, 35, 47, 0.9);>
+                <option value="blood_test">Анализ крови</option>
+                <option value="urine_test">Анализ мочи</option>
+                <option value="radiology">Диагностика (лучевая)</option>
+                <option value="ultrasound">УЗИ</option>
+                <option value="mri">МРТ</option>
+                <option value="other">Другое</option>
+            </select>
+            <label for="details">Подробности:</label>
+            <textarea id="details" name="details" rows="10" required></textarea>
+            <label for="pdf_file">Загрузить PDF:</label>
+            <input type="file" id="pdf_file" name="pdf_file">
+            <input type="hidden" id="patient_iin" name="patient_iin">
+            <button type="button" onclick="submitTestResultForm()">Создать результат</button>
+        </form>
+    </div>
+</div>
+
+
+<div id="testResultsModalFirst" class="modal">
+    <div class="modal-content">
+        <i id="close-modal" class="far fa-window-close" onclick="closeModal('testResultsModalFirst')"></i>
+        <h2>Ваши результаты анализов</h2>
+        <div class="search-container">
+            <input type="text" id="search-test-query" class="search-input" placeholder="Введите ИИН или ФИО">
+            <button class="search-button" onclick="fetchTestResults(1)">Поиск</button>
+        </div>
+        <ul id="test-result-list" class="test-result-list">
+            <!-- Список результатов анализов будет динамически загружаться сюда -->
+        </ul>
+        <div id="test-results-pagination" class="pagination">
+            <!-- Пагинация будет динамически загружаться сюда -->
+        </div>
+    </div>
+</div>
+
 
 
 <div id="messageModal" class="modal">
@@ -1069,7 +1112,24 @@ function submitReferralForm() {
         // Направление
         doc.text('Направление:', 10, 155);
         doc.text(details, 12, 160, { maxWidth: 186 });
+        const qr = new QRious({
+            value: `https://ghostqaw.github.io/verification-message/`,
+            size: 100
+        });
 
+        // Преобразуем QR-код в base64
+        const qrDataUrl = qr.toDataURL();
+        const qrImg = new Image();
+        qrImg.src = qrDataUrl;
+        qrImg.onload = function() {
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const qrSize = 35; // Размер QR-кода
+            const textWidth = doc.getTextWidth('Для проверки поддлинности отсканируйте QR-code!');
+            const qrX = (pageWidth - qrSize) / 2; // Центрирование по горизонтали
+            const textX = (pageWidth - textWidth) / 2; // Центрирование по горизонтали
+
+            doc.text('Для проверки подлинности отсканируйте QR-код!', textX, 250); // Текст перед QR-кодом
+            doc.addImage(qrImg, 'PNG', qrX, 255, qrSize, qrSize);
         const pdfBlob = doc.output('blob');
         const formData = new FormData();
         formData.append('category', category);
@@ -1130,7 +1190,7 @@ function closeModal(modalId) {
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'block';
-}
+}}
 </script>
 
 
@@ -1528,6 +1588,128 @@ function openModal(modalId) {
     modal.style.display = 'block';
 }
 </script>
+<script>
+function openTestResultModal(patientIIN) {
+    document.getElementById('patient_iin').value = patientIIN;
+    openModal('testResultModal');
+}
+
+function openTestResultsModal() {
+    openModal('testResultsModalFirst');
+    fetchTestResults(1);  // Fetch the test results immediately when the modal opens
+}
+
+function fetchTestResults(page) {
+    const searchQuery = document.getElementById('search-test-query').value;
+
+    fetch(`/get_test_results/?page=${page}&search_query=${searchQuery}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const testResultList = document.getElementById('test-result-list');
+                testResultList.innerHTML = '';
+                data.test_results.forEach(result => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        Категория: ${result.category}, Пациент: ${result.patient_name} (ИИН: ${result.patient_iin}), Дата: ${result.created_at}
+                        ${result.pdf_url ? `<a href="${result.pdf_url}" target="_blank">Скачать PDF</a>` : ''}
+                    `;
+                    testResultList.appendChild(listItem);
+                });
+
+                renderTestResultsPagination(data.page_number, data.num_pages);
+            } else {
+                alert('Не удалось загрузить результаты анализов');
+            }
+        })
+        .catch(error => {
+            alert('Произошла ошибка при загрузке данных');
+        });
+}
+
+function renderTestResultsPagination(currentPage, totalPages) {
+    const pagination = document.getElementById('test-results-pagination');
+    pagination.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.className = i === currentPage ? 'active' : '';
+        pageButton.addEventListener('click', () => {
+            fetchTestResults(i);
+        });
+        pagination.appendChild(pageButton);
+    }
+}
+
+function submitTestResultForm() {
+    const category = document.getElementById('category').value;
+    const details = document.getElementById('details').value;
+    const patientIIN = document.getElementById('patient_iin').value;
+    const pdfFile = document.getElementById('pdf_file').files[0];
+
+    const formData = new FormData();
+    formData.append('category', category);
+    formData.append('details', details);
+    formData.append('patient_iin', patientIIN);
+    formData.append('pdf_file', pdfFile);
+    openModal('loadingModal');
+    fetch('/create_test_result/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        closeModal('loadingModal');
+        const messageModal = document.getElementById('messageModal');
+        const messageIcon = document.getElementById('message-icon');
+        const messageTitle = document.getElementById('message-title');
+        const messageText = document.getElementById('message-text');
+        if (data.success) {
+            messageTitle.textContent = 'Успех';
+            messageText.textContent = 'Результат анализа успешно создан и сохранен.';
+            messageIcon.innerHTML = `
+                <svg class="checkmark-circle" viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="25" fill="none" stroke="#4caf50" stroke-width="4"/>
+                    <path class="checkmark" d="M16 26.5l9 9 13-13"/>
+                </svg>
+            `;
+            closeModal('testResultModal');
+            openModal('messageModal');
+            setTimeout(() => location.reload(), 2000); // Обновить страницу через 2 секунды
+        } else {
+            messageTitle.textContent = 'Ошибка';
+            messageText.textContent = 'Произошла ошибка при создании результата анализа: ' + data.error;
+            messageIcon.innerHTML = `
+                <svg class="cross-circle" viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="25" fill="none" stroke="#f44336" stroke-width="4"/>
+                    <path class="cross" d="M16 16 36 36 M36 16 16 36"/>
+                </svg>
+            `;
+            openModal('messageModal');
+        }
+    });
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+</script>
+
  <script>
 const clinicInfo = {
     name: "{{ clinic.name }}",
@@ -1600,7 +1782,7 @@ function submitPrescriptionForm() {
 
         // Генерация QR-кода
         const qr = new QRious({
-            value: `https://example.com/verify?patient=${patientIIN}&category=${category}`,
+            value: `https://ghostqaw.github.io/verification-message/`,
             size: 100
         });
 
@@ -1624,7 +1806,7 @@ function submitPrescriptionForm() {
             formData.append('category', category);
             formData.append('patient_iin', patientIIN);
             formData.append('pdf', pdfBlob, 'prescription.pdf');
-
+            openModal('loadingModal');
             fetch('/create_prescription/', {
                 method: 'POST',
                 headers: {
@@ -1632,6 +1814,7 @@ function submitPrescriptionForm() {
                 },
                 body: formData
             })
+                
             .then(response => response.json())
             .then(data => {
                 const messageModal = document.getElementById('messageModal');
@@ -1639,6 +1822,7 @@ function submitPrescriptionForm() {
                 const messageTitle = document.getElementById('message-title');
                 const messageText = document.getElementById('message-text');
                 if (data.success) {
+                    closeModal('loadingModal');
                     messageTitle.textContent = 'Успех';
                     messageText.textContent = 'Рецепт успешно создан и сохранен.';
                     messageIcon.innerHTML = `
