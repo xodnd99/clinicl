@@ -10,7 +10,7 @@ from .models import PatientDetail
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from .models import Patient, Doctor
+from django.core.files.base import ContentFile
 
 def login_signup_view(request):
     if request.method == 'POST':

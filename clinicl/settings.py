@@ -114,11 +114,22 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://0.0.0.0',
+    'https://0.0.0.0',
+    'http://localhost',
+    'https://localhost',
+    'http://127.0.0.1',
+    'https://127.0.0.1',
+    'http://localhost:8000',  # если используете другой порт
+    'https://localhost:8000',
+]
 
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
+
+
 
 LANGUAGE_CODE = 'en-us'
 
