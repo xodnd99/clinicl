@@ -7,13 +7,12 @@ WORKDIR /app
 
 COPY . /app
 
-RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN . venv/bin/activate && python manage.py makemigrations clinicApp && python manage.py migrate
+
 
 EXPOSE 8000
 
-CMD ["sh", "-c", ". venv/bin/activate && python manage.py runserver 0.0.0.0:8000"]
-
+CMD ["/wait-for-it.sh", "db:5432", "--", "sh", "-c", ". venv/bin/activate && python manage.py makemigrations clinicApp && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
 
 
