@@ -31,6 +31,7 @@ p.s пароль желательно не менять, иначе придет
 
 
 Чтобы развернуть все на новой машине выполните команду: docker-compose up --build
+
 Эта команда создаст образы Docker и запустит контейнеры, автоматически выполнив миграцию и запустив приложение.
 
 
@@ -68,4 +69,5 @@ Then enter the interactive database environment with the command sudo -u postgre
 
 
 To deploy everything on a new machine, run the command: docker-compose up --build
+
 This command will create Docker images and launch containers, automatically migrating and running the application.
