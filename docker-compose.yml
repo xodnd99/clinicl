@@ -15,7 +15,7 @@ services:
 
   web:
     build: .
-    command: sh -c "./entrypoint.sh"  # Changed to use entrypoint.sh
+    command: sh -c "./entrypoint.sh"
     volumes:
       - .:/app
     ports:
@@ -31,17 +31,21 @@ services:
 
   nginx:
     image: nginx:latest
+    restart: always
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - web
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./certs:/etc/nginx/certs
+    depends_on:
+      - web
+    entrypoint: /bin/sh -c "if [ ! -f /etc/nginx/certs/nginx.crt ]; then openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/nginx.key -out /etc/nginx/certs/nginx.crt -subj '/C=US/ST=State/L=City/O=Company Name/OU=Org/CN=localhost'; fi && nginx -g 'daemon off;'"
 
 volumes:
   postgres_data:
+  certs:
+
 
 
 
