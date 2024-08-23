@@ -7,12 +7,13 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install --no-cache-dir -r requirements.txt
 
 
+RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
 
+# Expose port
 EXPOSE 8000
 
-CMD ["/wait-for-it.sh", "db:5432", "--", "sh", "-c", ". venv/bin/activate && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
-
+# CMD is now simplified; entrypoint.sh will handle the logic
+CMD ["sh", "entrypoint.sh"]
 

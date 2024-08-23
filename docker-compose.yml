@@ -11,11 +11,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   web:
     build: .
-    command: sh -c ". venv/bin/activate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "./entrypoint.sh"  # Changed to use entrypoint.sh
     volumes:
       - .:/app
     ports:
