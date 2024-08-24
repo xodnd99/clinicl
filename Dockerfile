@@ -7,13 +7,15 @@ WORKDIR /app
 
 COPY . /app
 
+# Download wait-for-it.sh
+RUN curl -o /wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
 
 
 RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
 
-# Expose port
 EXPOSE 8000
 
-# CMD is now simplified; entrypoint.sh will handle the logic
-CMD ["sh", "entrypoint.sh"]
+CMD ["sh", "./entrypoint.sh"]
+
 
