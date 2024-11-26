@@ -3,14 +3,14 @@ Attention: Для корректной работы вам нужна устан
 Advice: Если вы работаете в ОС Windows советую вам просто установить Windows Subsystem for Linux (WSL) для быстрого запуска 
 
 Шаги запуска:
-1-клонируем репеситори в pycharm ```bash https://github.com/ghostqaw/clinicl.git ```
+1-клонируем репеситори в pycharm ```https://github.com/ghostqaw/clinicl.git ```
 
-2-активируем виртуальное окружение ``` bash source venv/bin/activate ```
-3-устанавливаем пакеты ```bash pip install -r requirements.txt ```
-возможно при установке зависымых пакетов появится ошибка установки blib, для решения запустите команду ```bash sudo apt install cmake```
+2-активируем виртуальное окружение ```source venv/bin/activate ```
+3-устанавливаем пакеты ```pip install -r requirements.txt ```
+возможно при установке зависымых пакетов появится ошибка установки blib, для решения запустите команду ```sudo apt install cmake```
 
-4-установка и настройка БД Postgresql для установки выполните след командуы: ```bash sudo apt update sudo && apt install postgresql```, запустите БД по команде ```bash sudo systemctl start postgresql.```
-Потом войдите в интерактивную среду БД по команде: ```bash sudo -u postgres psql```  установите пароль для пользвателя postgres по команде: ```sql ALTER USER postgres WITH PASSWORD 'qaz123';``` 
+4-установка и настройка БД Postgresql для установки выполните след командуы: ```sudo apt update sudo && apt install postgresql```, запустите БД по команде ```sudo systemctl start postgresql.```
+Потом войдите в интерактивную среду БД по команде: ```sudo -u postgres psql```  установите пароль для пользвателя postgres по команде: ```ALTER USER postgres WITH PASSWORD 'qaz123';``` 
 p.s пароль желательно не менять, иначе придется переконфигурировать подключение к БД в файле settings.py
 
 
@@ -18,18 +18,18 @@ p.s пароль желательно не менять, иначе придет
 
  
 
-5-запишем изменения в файл мирации находясь в корне проекта ```bash python manage.py makemigrations clinicApp```  перед применением миграции удалите все файлы миграции кроме  __init__.py в папке clinicApp/migrations/
+5-запишем изменения в файл мирации находясь в корне проекта ```python manage.py makemigrations clinicApp```  перед применением миграции удалите все файлы миграции кроме  __init__.py в папке clinicApp/migrations/
 
-6-применяем в файлы миграции ```bash python manage.py migrate```
+6-применяем в файлы миграции ```python manage.py migrate```
 
-7-запуск проекта ```bash python manage.py runserver```
+7-запуск проекта ```python manage.py runserver```
 
-8-создание суперпользователя ```bash python manage.py createsuperuser```
+8-создание суперпользователя ```python manage.py createsuperuser```
 
 9-откройте след адрес в браузере https://0.0.0.0:8000/admin/ если не сутановлены SSL сертификаты просто откройте ссылку https://0.0.0.0:8000/admin/ для доступа к панели администратора 
 
 
-Чтобы развернуть все на новой машине выполните команду: ```bash docker-compose up --build```
+Чтобы развернуть все на новой машине выполните команду: ```docker-compose up --build```
 
 Эта команда создаст образы Docker и запустит контейнеры, автоматически выполнив миграцию и запустив приложение.
 
